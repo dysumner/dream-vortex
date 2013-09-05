@@ -1,0 +1,45 @@
+#!/bin/bash
+#
+# NAME: initialize-dream-data
+#
+# USAGE: initialize-dream-data
+#
+# DESCRIPTION:
+#    This script will process all of the images found in the data/images
+#    directory.
+#
+#    This program should be run anytime images are modified or added to
+#    the dream vortex. 
+#
+# OUTPUT:
+#    Each image in the data/images directory will be processed and added
+#    to the data/dreams directory. If the data/dreams directory does not
+#    already exist it will be created.
+#
+
+DREAM_VORTEX_ROOT=$(readlink -f $(dirname $0/)/..)
+DREAM_VORTEX_DATA=$DREAM_VORTEX_ROOT/data
+
+IMAGE_DATA_DIR=$DREAM_VORTEX_DATA/images
+DREAM_DATA_DIR=$DREAM_VORTEX_DATA/dreams
+
+PROCESS_IMAGE=$DREAM_VORTEX_ROOT/bin/process-image
+
+if [[ ! -e "$DREAM_DATA_DIR" ]]; then
+   echo "initialize-dream-data: creating dream data directory."
+   mkdir -p $DREAM_DATA_DIR
+fi
+
+pushd $PWD >/dev/null
+
+cd $DREAM_DATA_DIR
+
+for img in $IMAGE_DATA_DIR/*
+do
+   $PROCESS_IMAGE $img
+done
+
+popd >/dev/null
+
+exit 0
+

@@ -1,0 +1,119 @@
+#!/bin/bash
+#
+# NAME: process-images
+#
+# USAGE: process-images FILENAME [OUTPUT]
+#
+# DESCRIPTION:
+#    This script will resize an image for use in the dream-vortex.
+#
+#    To avoid distortion the image the canvas is first resized to
+#    a square whose size is equal to the largest dimension of the 
+#    original image (which is centered in the new canvas). After 
+#    resizing and centering the image is then scaled to the final 
+#    dimension.
+#
+# OPTIONS:
+#    FILENAME
+#       The orginal image file
+#
+#    OUTPUT
+#       Optional filename for resized image. If not specified the
+#       image will be save in the working directory with the same
+#       name as the original file.
+#
+# OUTPUT:
+#    The final resized image will be written to the current working
+#    directory unless the OUTPUT parameter is specified. (If the 
+#    output file already exists it will not be overwritten.
+#
+# RETURN:
+#    Returns 0 on successful completion. Otherwise returns 1.
+#
+
+
+######################################################################
+# Global varibales and functions
+#
+######################################################################
+
+TARGET_SIZE=512 # size of final image (square)
+
+usage() {
+	echo "USAGE: process-images.sh FILENAME [OUTPUT]"
+}
+
+bailout() {
+   echo "ERROR: $*"
+   exit 1
+}
+
+
+######################################################################
+# Process command-line arguments
+#
+######################################################################
+
+if [[ $# -eq 0 ]] || [[ $# -gt 2 ]]; then
+	usage; exit 1
+fi
+
+ORIGINAL_IMAGE=$1  # input filename
+RESIZED_IMAGE=$2   # output filename
+
+# If no output file is specified save the file to the working directory
+if [[ -z "$RESIZED_IMAGE" ]]; then 
+   RESIZED_IMAGE="./$(basename $ORIGINAL_IMAGE)"
+fi
+
+# Automatically convert to PNG
+RESIZED_IMAGE=${RESIZED_IMAGE%.*}.png
+
+# Verify that the input file exists
+if [[ ! -e "$ORIGINAL_IMAGE" ]]; then
+	bailout "image $ORIGINAL_IMAGE does not exist."
+fi
+
+# Verify that the output file does not already exist
+if [[ -e "$RESIZED_IMAGE" ]]; then
+   bailout "image $RESIZED_IMAGE already exists."
+fi
+
+
+######################################################################
+# Parse image info
+#
+######################################################################
+
+# Get dimensions of the original image
+image_size=($(identify -format "%w %h" $ORIGINAL_IMAGE))
+width=${image_size[0]}
+height=${image_size[1]}
+
+# Set intermediate size to largest dimension
+if [[ $width -gt $height ]]; then
+	size=$width
+else
+	size=$height
+fi
+
+
+######################################################################
+# Convert image
+#
+######################################################################
+
+echo "process-images: resizing $ORIGINAL_IMAGE from ${size}x${size} to ${TARGET_SIZE}x${TARGET_SIZE}"
+
+TMP_IMAGE=mktemp # temporary file for intermediate image
+
+# Resize the canvas, centering image
+convert $ORIGINAL_IMAGE -gravity center -background transparent -extent ${size}x${size}  $TMP_IMAGE
+
+# Scale intermediate image to final size
+convert $TMP_IMAGE -resize ${TARGET_SIZE}x${TARGET_SIZE} $RESIZED_IMAGE 
+
+# Remove the temorary file and exit
+rm -f $TMP_IMAGE
+
+exit 0
