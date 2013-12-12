@@ -1,14 +1,16 @@
 #!/usr/bin/env vroom-wrapper
+
 from vroom import *
 
-from dreamvortex.vortex import random_vortex
 from dreamvortex import settings
+from dreamvortex.vortex import Vortex
 
 def init():
-   paths  = [random_vortex(200, 0.2) for _ in range(settings.count)]
+   paths  = [Vortex.random_path(200) for _ in range(settings.count)]
    colors = [random_color() + [1] for _ in range(settings.count)]
    
    Global.buffers = []
+
    for vertices, color in zip(paths, colors):
       buffer = Buffer(vertices, [color]*len(vertices))
       buffer.renderMode('lines:strip')
@@ -22,4 +24,3 @@ def display():
 
    for vortex in Global.buffers:
       vortex.draw()
-
