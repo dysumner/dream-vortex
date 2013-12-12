@@ -1,3 +1,10 @@
+# Settings for dream vortex application
+# 
+
+
+# General vortex settings
+# 
+
 a:
    min: 0.9
    max: 1.0
@@ -5,4 +12,40 @@ b:
    min: 0.3
    max: 0.7
 
+delta-theta: 0.1
+delta-z: 0.2
+
+# vortex-lines settings
+#
+
 count: 12
+
+# vortex-particles settings
+#
+
+particle-step-size:
+   min: 0.05
+   max: 0.1
+
+particle-velocity:
+   min: 0.5
+   max: 0.85
+
+particle-radius:
+   min: 1.0
+   max: 3.0
+
+particle-color-range:
+   min: 0.3
+   max: 0.8
+
+# vortex-strip-static
+#
+
+use-color: true
+
+static-count: 300
+
+height:
+   min: 0.25
+   max: 1.0
