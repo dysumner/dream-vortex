@@ -1,0 +1,57 @@
+#!/usr/bin/env vroom-wrapper
+
+from vroom import *
+
+from dreamvortex import settings
+from dreamvortex.vortex import Vortex
+
+from math import sin, cos, pi
+from random import random, randint
+
+
+def init():
+   size = settings['static-count']
+
+   Global.vortices = []
+   Global.colors = []
+
+   for _ in range(size):
+      points, texcoords = Vortex.random_strip(randint(5, 12))
+      vortex = Buffer(points)
+      vortex.loadTexCoordData(texcoords)
+      vortex.renderMode('triangles:strip')
+
+      Global.vortices.append(vortex)
+
+   if settings['use-color']:
+      Global.colors = [random_color() + [1.0] for _ in range(size)]
+   else:
+      Global.colors = [[random()]*3 + [1.0] for _ in range(size)]
+
+def gl_init():
+   Global.texture = Texture.from_file('data/brush-white.png')
+
+def display():
+   lighting(False)
+
+   color(0.3)
+   draw(grid, 10, 10, 10, 10).at([-5, -5, 0])
+
+   transparency(True)
+
+   Global.texture.bind()
+
+   glDepthMask(GL_FALSE)
+   glCullFace(GL_BACK)
+
+   for vortex, c in zip(Global.vortices, Global.colors):
+      color(c)
+      vortex.draw(style='solid')
+
+   glCullFace(GL_FRONT)
+
+   for vortex, c in zip(Global.vortices, Global.colors):
+      color(c)
+      vortex.draw(style='solid')
+
+   Global.texture.unbind()
