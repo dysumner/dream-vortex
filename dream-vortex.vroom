@@ -1,0 +1,77 @@
+#!/usr/bin/env vroom-wrapper
+#
+# NAME: dream-vortex.vroom
+#
+
+from vroom import *
+
+from dreamvortex import settings, load_dreams
+
+from dreamvortex.engines.particle import ParticleEngine
+from dreamvortex.engines.vortex import VortexEngine
+from dreamvortex.engines.dream import DreamEngine
+
+from dreamvortex.vortex import Vortex
+
+from math import sin, cos, pi
+from random import random, randint
+import os
+
+#@LiveCoding.no_update
+def init():
+   Global.vortex = VortexEngine()
+   Global.particles = ParticleEngine()
+   Global.dreams = DreamEngine()
+
+def gl_init():
+   load_dreams()
+
+   Global.brush_texture = Texture.from_file(get_resource('brush-white.png'))
+
+def frame():
+   Global.vortex.step()
+   Global.particles.step()
+   Global.dreams.step()
+
+def display():
+   lighting(False)
+
+   draw_grid()
+   draw_dreams()
+   draw_vortex()
+   draw_particles()
+
+
+def draw_grid():
+   color(0.3)
+   draw(grid, 40, 40, 20, 20).at([-20, -20, 0])
+
+def draw_vortex():
+   transparency(True)
+   #glBlendFunc(GL_SRC_ALPHA, GL_ONE); 
+
+   Global.brush_texture.bind()
+
+   glDepthMask(GL_FALSE)
+   glDisable(GL_CULL_FACE)
+
+   #glCullFace(GL_BACK)
+   Global.vortex.draw()
+
+   #glEnable(GL_CULL_FACE)
+   #glCullFace(GL_FRONT)
+   #Global.engine.draw()
+
+   #glDepthMask(GL_TRUE)
+
+   Global.brush_texture.unbind()
+
+def draw_particles():
+   Global.particles.draw()
+
+def draw_dreams():
+   transparency(True)
+
+   glDisable(GL_CULL_FACE)
+
+   Global.dreams.draw()
