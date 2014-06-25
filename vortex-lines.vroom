@@ -2,12 +2,14 @@
 
 from vroom import *
 
-from dreamvortex import settings
+from dreamvortex import get_settings
 from dreamvortex.vortex import Vortex
 
 def init():
-   paths  = [Vortex.random_path(200) for _ in range(settings.count)]
-   colors = [random_color() + [1] for _ in range(settings.count)]
+   Global.settings = get_settings()
+
+   paths  = [Vortex.random_path(200) for _ in range(Global.settings.count)]
+   colors = [random_color() + [1] for _ in range(Global.settings.count)]
    
    Global.buffers = []
 
