@@ -3,7 +3,15 @@ from vroom.utils.resources import get_resource
 from vroom.rendering.texture import Texture
 from random import randint
 
-settings = Settings(get_resource('vortex-settings.yaml'))
+settings = Settings('vortex-settings.yaml')
+
+def init_settings():
+    print('dreamvortex: init_settings')
+    global settings
+    settings = Settings('vortex-settings.yaml')
+
+def get_settings():
+    return Settings('vortex-settings.yaml')
 
 import os
 
