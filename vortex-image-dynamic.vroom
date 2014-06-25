@@ -1,0 +1,25 @@
+#!/usr/bin/env vroom-wrapper
+
+from vroom import *
+
+from dreamvortex.engines.dream import DreamEngine
+from dreamvortex import load_dreams
+
+@LiveCoding.no_update
+def init():
+   Global.engine = DreamEngine()
+
+def gl_init():
+   load_dreams()
+
+def frame():
+   Global.engine.step()
+
+def display():
+   lighting(False)
+
+   color(0.3)
+   draw(grid, 40, 40, 20, 20).at([-20, -20, 0])
+
+   glDisable(GL_CULL_FACE)
+   Global.engine.draw()
