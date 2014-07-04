@@ -48,21 +48,13 @@ def draw_grid():
 
 def draw_vortex():
    transparency(True)
-   #glBlendFunc(GL_SRC_ALPHA, GL_ONE); 
 
    Global.brush_texture.bind()
 
    glDepthMask(GL_FALSE)
    glDisable(GL_CULL_FACE)
 
-   #glCullFace(GL_BACK)
    Global.vortex.draw()
-
-   #glEnable(GL_CULL_FACE)
-   #glCullFace(GL_FRONT)
-   #Global.engine.draw()
-
-   #glDepthMask(GL_TRUE)
 
    Global.brush_texture.unbind()
 
@@ -70,7 +62,8 @@ def draw_particles():
    Global.particles.draw()
 
 def draw_dreams():
-   transparency(True)
+#   transparency(True)
+   transparency(False)
 
    glDisable(GL_CULL_FACE)
 

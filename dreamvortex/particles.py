@@ -15,8 +15,8 @@ class Particle:
 
       self.age = 0
 
-      c = settings.get_uniform('particle-color-range')
-      self.color = [c, 0.8, 0.3, 0.65]
+      c = settings.get_uniform('particle-color-range')   #gives a random number btw min and max in file
+      self.color = [c, 0.8, 0.3, 0.65]    #c gives the R value for RGBT
 
    @staticmethod
    def RandomParticle():
@@ -132,7 +132,7 @@ class Engine:
          particle.step()
          particle.age += 1
 
-      if random() < 0.1:
+      if random() < 0.05:     # originally 0.1; want to change this to a setting
          for _ in range(randint(1, 5)):
             self.add_particle()
 

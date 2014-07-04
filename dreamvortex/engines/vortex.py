@@ -1,6 +1,6 @@
 from dreamvortex.engines.engine import BaseParticle, BaseEngine
 from dreamvortex.vortex import Vortex
-from dreamvortex import settings
+from dreamvortex import settings, get_strip
 
 from vroom.rendering.buffers import Buffer
 from vroom.core.color import color
@@ -21,7 +21,11 @@ class BrushStroke(BaseParticle):
       self.height = uniform(0.5, 3.25)
 
       c = random()
+#      c = [0.2,0.2,0.2]
       self.color = [c, c, c, 1.0]
+      
+      # To put dreams on the strips
+      self.texture = get_strip()
 
       self.initialize()
       self.step()
@@ -72,16 +76,20 @@ class VortexEngine(BaseEngine):
       BaseEngine.__init__(self)
 
       self.particles = []
+#      self.texture = get_strip()    # added to put dream images on strips
       
    def add_particle(self):
       self.particles.append(BrushStroke(randint(400, 500), Vortex.random_vortex()))
+      self.texture = get_strip()    # added to put dream images on strips
 
    def draw(self):
       for particle in self.particles:
+         particle.texture.bind()
          particle.draw()
+         particle.texture.unbind()
 
    def spawn(self):
-      if random() < 0.05:
+      if random() < 0.05:    # originally 0.05
          for _ in range(randint(1, 5)):
             self.add_particle()
 

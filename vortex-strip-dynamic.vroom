@@ -3,24 +3,51 @@
 from vroom import *
 
 from dreamvortex.engines.vortex import VortexEngine
+from dreamvortex import load_strips
+
+import os
 
 @LiveCoding.no_update
 def init():
-   Global.engine = VortexEngine()
+   Global.engine = VortexEngine()   # assigns the class
 
 def gl_init():
-   Global.texture = Texture.from_file('data/brush-white.png')
+#   Global.texture = Texture.from_file('data/PNG_Files/Dawn_Vortex_Strip_2.png')
+   
+   # Load in various strip images as textures
+#   Global.textures = []
+#   for img in Global.strips: 
+#      texture = get_resource(img)
+#      Global.textures.append(Texture.from_file(texture))
+   load_strips()
 
 def frame():
    Global.engine.step()
 
-def display():
+def display():    # to draw dreams on strips
    lighting(False)
 
    color(0.3)
-   draw(grid, 10, 10, 10, 10).at([-5, -5, 0])
+   draw(grid, 10, 10, 10, 10).at([-5, -5, -10])
 
-   transparency(True)
+   transparency(False)     # originally True
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE); 
+
+  # To draw different images on the strips
+#   for texture in Global.textures:
+#      texture.bind()
+#      Global.engine.draw()
+#      texture.unbind()
+   Global.engine.draw()
+
+def display_orig():
+   lighting(False)
+
+   color(0.3)
+   draw(grid, 10, 10, 10, 10).at([-5, -5, -10])
+
+   transparency(True)     # originally True; 
+                           # may not actually control the transparency - we saw no difference
    glBlendFunc(GL_SRC_ALPHA, GL_ONE); 
 
    Global.texture.bind()
@@ -31,17 +58,10 @@ def display():
    glCullFace(GL_BACK)
    Global.engine.draw()
 
-   #glEnable(GL_CULL_FACE)
-   #glCullFace(GL_FRONT)
-   #Global.engine.draw()
-
-   #glDepthMask(GL_TRUE)
-
    Global.texture.unbind()
 
 
-
-def scratch():
+def scratch():       # Jordan's and doesn't work because Global.vortices etc not defined
    transparency(True)
 
    Global.texture.bind()
