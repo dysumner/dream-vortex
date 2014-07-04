@@ -12,6 +12,7 @@ def init():
    Global.engine = VortexEngine()   # assigns the class
 
 def gl_init():
+   # for drawing a single dream on the strips use the following line and display_orig()
 #   Global.texture = Texture.from_file('data/PNG_Files/Dawn_Vortex_Strip_2.png')
    
    # Load in various strip images as textures
@@ -20,7 +21,7 @@ def gl_init():
 def frame():
    Global.engine.step()
 
-def display():    # to draw dreams on strips - actually the image mapping is now in engines.vortex.py
+def display():    # to draw dreams on strips - image mapping is now in engines.vortex.py
    lighting(False)
 
    color(0.3)
@@ -29,16 +30,11 @@ def display():    # to draw dreams on strips - actually the image mapping is now
    transparency(True)     # originally True
    glBlendFunc(GL_SRC_ALPHA, GL_ONE); 
 
-   glDepthMask(GL_FALSE)
+   # the following 3 lines are necessary to get backs drawn on strips
+   glDepthMask(GL_FALSE)     
    glDisable(GL_CULL_FACE)
-
    glCullFace(GL_BACK)
 
-  # To draw different images on the strips
-#   for texture in Global.textures:
-#      texture.bind()
-#      Global.engine.draw()
-#      texture.unbind()
    Global.engine.draw()
 
 def display_orig():
@@ -48,7 +44,7 @@ def display_orig():
    draw(grid, 10, 10, 10, 10).at([-5, -5, -10])
 
    transparency(True)     # originally True; 
-                           # may not actually control the transparency - we saw no difference
+                           
    glBlendFunc(GL_SRC_ALPHA, GL_ONE); 
 
    Global.texture.bind()

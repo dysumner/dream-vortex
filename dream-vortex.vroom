@@ -5,7 +5,7 @@
 
 from vroom import *
 
-from dreamvortex import settings, load_dreams
+from dreamvortex import settings, load_dreams, load_strips
 
 from dreamvortex.engines.particle import ParticleEngine
 from dreamvortex.engines.vortex import VortexEngine
@@ -25,8 +25,9 @@ def init():
 
 def gl_init():
    load_dreams()
+   load_strips()  # to put dreams on strips
 
-   Global.brush_texture = Texture.from_file(get_resource('brush-white.png'))
+#   Global.brush_texture = Texture.from_file(get_resource('brush-white.png'))
 
 def frame():
    Global.vortex.step()
@@ -37,16 +38,27 @@ def display():
    lighting(False)
 
    draw_grid()
-   draw_dreams()
+#   draw_dreams()
    draw_vortex()
    draw_particles()
-
 
 def draw_grid():
    color(0.3)
    draw(grid, 40, 40, 20, 20).at([-20, -20, 0])
 
 def draw_vortex():
+   transparency(True)
+
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE); 
+
+   # the following 3 lines are necessary to get backs drawn on strips
+   glDepthMask(GL_FALSE)     
+   glDisable(GL_CULL_FACE)
+   glCullFace(GL_BACK)
+
+   Global.vortex.draw()
+
+def draw_vortex_orig():    # may not work due to changes in engines.vortex
    transparency(True)
 
    Global.brush_texture.bind()
