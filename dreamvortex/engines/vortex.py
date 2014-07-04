@@ -76,7 +76,6 @@ class VortexEngine(BaseEngine):
       BaseEngine.__init__(self)
 
       self.particles = []
-#      self.texture = get_strip()    # added to put dream images on strips
       
    def add_particle(self):
       self.particles.append(BrushStroke(randint(400, 500), Vortex.random_vortex()))
@@ -89,7 +88,7 @@ class VortexEngine(BaseEngine):
          particle.texture.unbind()
 
    def spawn(self):
-      if random() < 0.05:    # originally 0.05
+      if random() < 0.02:    # originally 0.05
          for _ in range(randint(1, 5)):
             self.add_particle()
 

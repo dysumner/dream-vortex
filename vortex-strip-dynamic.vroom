@@ -15,23 +15,24 @@ def gl_init():
 #   Global.texture = Texture.from_file('data/PNG_Files/Dawn_Vortex_Strip_2.png')
    
    # Load in various strip images as textures
-#   Global.textures = []
-#   for img in Global.strips: 
-#      texture = get_resource(img)
-#      Global.textures.append(Texture.from_file(texture))
    load_strips()
 
 def frame():
    Global.engine.step()
 
-def display():    # to draw dreams on strips
+def display():    # to draw dreams on strips - actually the image mapping is now in engines.vortex.py
    lighting(False)
 
    color(0.3)
    draw(grid, 10, 10, 10, 10).at([-5, -5, -10])
 
-   transparency(False)     # originally True
+   transparency(True)     # originally True
    glBlendFunc(GL_SRC_ALPHA, GL_ONE); 
+
+   glDepthMask(GL_FALSE)
+   glDisable(GL_CULL_FACE)
+
+   glCullFace(GL_BACK)
 
   # To draw different images on the strips
 #   for texture in Global.textures:
