@@ -13,7 +13,9 @@ class Particle(BaseParticle):
       BaseParticle.__init__(self, lifetime, vortex)
 
       c = settings.get_uniform('particle-color-range')
-      self.color = [c, 0.8, 0.3, 0.65]
+#      self.color = [c, 0.8, 0.3, 0.65]
+      r,g,b = settings.get_uniform('particle-color-range'),settings.get_uniform('particle-color-range'),settings.get_uniform('particle-color-range')
+      self.color = [r, g, 0.3*b, 0.65]
 
    def step(self):
       self.vortex.step()
@@ -36,6 +38,6 @@ class ParticleEngine(BaseEngine):
       self.buffer.draw()
 
    def spawn(self):
-      if random() < 0.1:
+      if random() < 0.01:      # originally 0.1
          for _ in range(randint(1, 5)):
             self.add_particle()

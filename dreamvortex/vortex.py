@@ -26,10 +26,10 @@ class Vortex:
       self.z_step = z_step  # vertical step size
 
       # Initialize current possition
-      # We begin with a random angle and a height of zero
+      # We begin with a random angle and a height of zero - dys changed to -10
       self.theta = random()*2.0*pi 
       r = Vortex.radius(self.a, self.b, self.theta)
-      self.pos = [r*cos(self.theta), r*sin(self.theta), 0.0]
+      self.pos = [r*cos(self.theta), r*sin(self.theta), -10.0]
    
    def __str__(self):
       return '(vortex a={}, b={}, dr={}, dz={})'.format(self.a, self.b, self.r_step, self.z_step)
@@ -58,8 +58,10 @@ class Vortex:
    def random_vortex():
       a = settings.get_uniform('a')
       b = settings.get_uniform('b')
-      dr = settings['delta-theta']
-      dz = settings['delta-z']
+#      dr = settings['delta-theta']
+      dr = settings['delta-theta'] * (1.5/(a*a+b*b)**0.5)
+#      dz = settings['delta-z']
+      dz = settings['delta-z'] * (1./(a*a+b*b)**0.5)
       return Vortex(a, b, dr, dz)
 
    @staticmethod

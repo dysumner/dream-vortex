@@ -12,7 +12,7 @@ b:
    min: 0.3
    max: 0.7
 
-delta-theta: 0.1
+delta-theta: 0.1     #originally 0.1
 delta-z: 0.2
 
 # vortex-lines settings

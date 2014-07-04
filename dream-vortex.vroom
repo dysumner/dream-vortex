@@ -44,7 +44,7 @@ def display():
 
 def draw_grid():
    color(0.3)
-   draw(grid, 40, 40, 20, 20).at([-20, -20, 0])
+   draw(grid, 40, 40, 20, 20).at([-20, -20, -10])
 
 def draw_vortex():
    transparency(True)

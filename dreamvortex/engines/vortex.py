@@ -22,9 +22,9 @@ class BrushStroke(BaseParticle):
 
       c = random()
 #      c = [0.2,0.2,0.2]
-      self.color = [c, c, c, 1.0]
+      self.color = [c, c, c, 1.0]   # gives the strips various intensities
       
-      # To put dreams on the strips
+      # To put a random dream on the strip
       self.texture = get_strip()
 
       self.initialize()
