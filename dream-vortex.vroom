@@ -8,7 +8,7 @@ from vroom import *
 from dreamvortex import settings, load_dreams, load_strips
 
 from dreamvortex.engines.particle import ParticleEngine
-from dreamvortex.engines.vortex import VortexEngine
+from dreamvortex.engines.strip import StripEngine
 from dreamvortex.engines.dream import DreamEngine
 
 from dreamvortex.vortex import Vortex
@@ -19,7 +19,7 @@ import os
 
 #@LiveCoding.no_update
 def init():
-   Global.vortex = VortexEngine()
+   Global.strip = StripEngine()
    Global.particles = ParticleEngine()
    Global.dreams = DreamEngine()
 
@@ -30,19 +30,19 @@ def gl_init():
 #   Global.brush_texture = Texture.from_file(get_resource('brush-white.png'))
 
 def frame():
-   Global.vortex.step()
+   Global.strip.step()
    Global.particles.step()
    Global.dreams.step()
 
 def display():
    lighting(False)
 
-   draw_grid()
+   draw_floor()
 #   draw_dreams()
-   draw_vortex()
+   draw_strip()
    draw_particles()
 
-def draw_grid():
+def draw_floor():
    color(0.3)
    draw(grid, 40, 40, 20, 20).at([-20, -20, -10])
    pushMatrix()
@@ -50,7 +50,7 @@ def draw_grid():
    cube(40.0, style='solid')
    popMatrix()
 
-def draw_vortex():
+def draw_strip():
    transparency(True)
 
    glBlendFunc(GL_SRC_ALPHA, GL_ONE); 
@@ -60,9 +60,9 @@ def draw_vortex():
    glDisable(GL_CULL_FACE)
    glCullFace(GL_BACK)
 
-   Global.vortex.draw()
+   Global.strip.draw()
 
-def draw_vortex_orig():    # may not work due to changes in engines.vortex
+def draw_strip_orig():    # may not work due to changes in engines.vortex
    transparency(True)
 
    Global.brush_texture.bind()
@@ -70,7 +70,7 @@ def draw_vortex_orig():    # may not work due to changes in engines.vortex
    glDepthMask(GL_FALSE)
    glDisable(GL_CULL_FACE)
 
-   Global.vortex.draw()
+   Global.strip.draw()
 
    Global.brush_texture.unbind()
 

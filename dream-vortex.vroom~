@@ -47,7 +47,7 @@ def draw_grid():
    draw(grid, 40, 40, 20, 20).at([-20, -20, -10])
    pushMatrix()
    translate(-20, -20, -50)
-   cube(20.0, style='solid')
+   cube(40.0, style='solid')
    popMatrix()
 
 def draw_vortex():
