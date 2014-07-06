@@ -27,6 +27,9 @@ def gl_init():
    load_dreams()
    load_strips()  # to put dreams on strips
 
+   Global.floor_texture = Texture.from_file(get_resource( \
+         'floors/DV_Source3_Darkcentered.png'))
+
 #   Global.brush_texture = Texture.from_file(get_resource('brush-white.png'))
 
 def frame():
@@ -43,12 +46,29 @@ def display():
    draw_particles()
 
 def draw_floor():
-   color(0.3)
-   draw(grid, 40, 40, 20, 20).at([-20, -20, -10])
-   pushMatrix()
-   translate(-20, -20, -50)
-   cube(40.0, style='solid')
-   popMatrix()
+   # a grid
+#   color(0.3)
+#   draw(grid, 40, 40, 20, 20).at([-20, -20, -10])
+
+   # a cube
+#   pushMatrix()
+#   translate(-20, -20, -50)
+#   cube(40.0, style='solid')
+#   popMatrix()
+
+   # an image
+   z = settings['z-offset']
+   
+   points = [[-50.,-50., z],[50., -50., z],[-50., 50., z],[50.,50.,z]]
+   coords = [[0.,0.],[1.,0.],[0.,1.],[1.,1.]]
+   floor = Buffer(points)
+   floor.loadTexCoordData(coords)
+   floor.renderMode('triangles:strip')
+   
+   color = [1.0, 1.0, 1.0, 0.0]
+   Global.floor_texture.bind()
+   floor.draw(style='solid')
+   Global.floor_texture.unbind()
 
 def draw_strip():
    transparency(True)
