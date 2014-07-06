@@ -1,0 +1,22 @@
+#!/usr/bin/env vroom-wrapper
+
+from vroom import *
+
+from dreamvortex.engines.particle import ParticleEngine
+
+@LiveCoding.no_update
+def init():
+   Global.engine = ParticleEngine()
+#   Global.colors = 0.5
+
+def frame():
+   Global.engine.step()
+#   Global.colors += 0.001
+
+def display():
+   lighting(False)
+
+   color(0.3)        #doesn't seem to actually use the color
+   draw(grid, 40, 40, 20, 20).at([-20, -10, -10])
+
+   Global.engine.draw()

@@ -1,0 +1,86 @@
+#!/usr/bin/env vroom-wrapper
+#
+# NAME: dream-vortex.vroom
+#
+
+from vroom import *
+
+from dreamvortex import settings, load_dreams, load_strips
+
+from dreamvortex.engines.particle import ParticleEngine
+from dreamvortex.engines.vortex import VortexEngine
+from dreamvortex.engines.dream import DreamEngine
+
+from dreamvortex.vortex import Vortex
+
+from math import sin, cos, pi
+from random import random, randint
+import os
+
+#@LiveCoding.no_update
+def init():
+   Global.vortex = VortexEngine()
+   Global.particles = ParticleEngine()
+   Global.dreams = DreamEngine()
+
+def gl_init():
+   load_dreams()
+   load_strips()  # to put dreams on strips
+
+#   Global.brush_texture = Texture.from_file(get_resource('brush-white.png'))
+
+def frame():
+   Global.vortex.step()
+   Global.particles.step()
+   Global.dreams.step()
+
+def display():
+   lighting(False)
+
+   draw_grid()
+#   draw_dreams()
+   draw_vortex()
+   draw_particles()
+
+def draw_grid():
+   color(0.3)
+   draw(grid, 40, 40, 20, 20).at([-20, -20, -10])
+   pushMatrix()
+   translate(-20, -20, -50)
+   cube(20.0, style='solid')
+   popMatrix()
+
+def draw_vortex():
+   transparency(True)
+
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE); 
+
+   # the following 3 lines are necessary to get backs drawn on strips
+   glDepthMask(GL_FALSE)     
+   glDisable(GL_CULL_FACE)
+   glCullFace(GL_BACK)
+
+   Global.vortex.draw()
+
+def draw_vortex_orig():    # may not work due to changes in engines.vortex
+   transparency(True)
+
+   Global.brush_texture.bind()
+
+   glDepthMask(GL_FALSE)
+   glDisable(GL_CULL_FACE)
+
+   Global.vortex.draw()
+
+   Global.brush_texture.unbind()
+
+def draw_particles():
+   Global.particles.draw()
+
+def draw_dreams():
+#   transparency(True)
+   transparency(False)
+
+   glDisable(GL_CULL_FACE)
+
+   Global.dreams.draw()

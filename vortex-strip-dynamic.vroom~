@@ -1,0 +1,79 @@
+#!/usr/bin/env vroom-wrapper
+
+from vroom import *
+
+from dreamvortex.engines.vortex import VortexEngine
+from dreamvortex import load_strips
+
+import os
+
+@LiveCoding.no_update
+def init():
+   Global.engine = VortexEngine()   # assigns the class
+
+def gl_init():
+   # for drawing a single dream on the strips use the following line and display_orig()
+#   Global.texture = Texture.from_file('data/PNG_Files/Dawn_Vortex_Strip_2.png')
+   
+   # Load in various strip images as textures
+   load_strips()
+
+def frame():
+   Global.engine.step()
+
+def display():    # to draw dreams on strips - image mapping is now in engines.vortex.py
+   lighting(False)
+
+   color(0.3)
+   draw(grid, 10, 10, 10, 10).at([-5, -5, -10])
+
+   transparency(True)     # originally True
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE); 
+
+   # the following 3 lines are necessary to get backs drawn on strips
+   glDepthMask(GL_FALSE)     
+   glDisable(GL_CULL_FACE)
+   glCullFace(GL_BACK)
+
+   Global.engine.draw()
+
+def display_orig():
+   lighting(False)
+
+   color(0.3)
+   draw(grid, 10, 10, 10, 10).at([-5, -5, -10])
+
+   transparency(True)     # originally True; 
+                           
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE); 
+
+   Global.texture.bind()
+
+   glDepthMask(GL_FALSE)
+   glDisable(GL_CULL_FACE)
+
+   glCullFace(GL_BACK)
+   Global.engine.draw()
+
+   Global.texture.unbind()
+
+
+def scratch():       # Jordan's and doesn't work because Global.vortices etc not defined
+   transparency(True)
+
+   Global.texture.bind()
+
+   glDepthMask(GL_FALSE)
+   glCullFace(GL_BACK)
+
+   for vortex, c in zip(Global.vortices, Global.colors):
+      color(c)
+      vortex.draw(style='solid')
+
+   glCullFace(GL_FRONT)
+
+   for vortex, c in zip(Global.vortices, Global.colors):
+      color(c)
+      vortex.draw(style='solid')
+
+   Global.texture.unbind()
