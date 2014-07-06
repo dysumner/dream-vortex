@@ -22,17 +22,18 @@ class Vortex:
    def __init__(self, a, b, r_step, z_step):
       # Set vortex parameters
       self.a, self.b = a, b # spiral parameters
-      self.r_step = r_step  # rotational step size
+      self.theta_step = theta_step  # rotational step size
       self.z_step = z_step  # vertical step size
 
       # Initialize current possition
-      # We begin with a random angle and a height of zero - dys changed to -10
+      # Begin with a random angle and a height of z_offset
       self.theta = random()*2.0*pi 
       r = Vortex.radius(self.a, self.b, self.theta)
       self.pos = [r*cos(self.theta), r*sin(self.theta), settings['z-offset']]
+            # may need to adjust z value in previous line
    
    def __str__(self):
-      return '(vortex a={}, b={}, dr={}, dz={})'.format(self.a, self.b, self.r_step, self.z_step)
+      return '(vortex a={}, b={}, dtheta={}, dz={})'.format(self.a, self.b, self.theta_step, self.z_step)
 
    def step(self):
       ''' Update current position to the next point along the vortex path.
@@ -40,7 +41,7 @@ class Vortex:
       returns -- new current position (x,y,z).
       '''
       # Increment the current angle and compute the new radius
-      self.theta += self.r_step
+      self.theta += self.theta_step
       radius = Vortex.radius(self.a, self.b, self.theta)
 
       # Update position and return value
@@ -58,11 +59,11 @@ class Vortex:
    def random_vortex():
       a = settings.get_uniform('a')
       b = settings.get_uniform('b')
-#      dr = settings['delta-theta']
-      dr = settings['delta-theta'] * (1.5/(a*a+b*b)**0.5)
-#      dz = settings['delta-z']
-      dz = settings['delta-z'] * (1./(a*a+b*b)**0.5)
-      return Vortex(a, b, dr, dz)
+#      theta_step = settings['delta-theta']
+      theta_step = settings['delta-theta'] / a
+#     z_step = settings['delta-z']
+      z_step = settings['delta-z'] / a
+      return Vortex(a, b, theta_step, z_step)
 
    @staticmethod
    def line_generator(steps, vortex):
@@ -75,7 +76,6 @@ class Vortex:
 
    @staticmethod
    def strip_generator(steps, vortex, height):
-      #height = settings.get_uniform('height')
 
       # randomize start point
       for _ in range(randint(0, 300)):
@@ -121,6 +121,8 @@ class Vortex:
 
    @staticmethod
    def image_strip():
+      ''' Called by DreamImage class __init__
+      '''
       vortex = Vortex.random_vortex()
 
       # randomize start point
@@ -128,7 +130,7 @@ class Vortex:
          vortex.step()
 
       steps = 6
-      d_theta = steps*vortex.r_step
+      d_theta = steps*vortex.theta_step
 
       r1 = Vortex.radius(vortex.a, vortex.b, vortex.theta)
       r2 = Vortex.radius(vortex.a, vortex.b, (vortex.theta+d_theta))
