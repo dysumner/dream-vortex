@@ -66,8 +66,7 @@ class BrushStroke(BaseParticle):
       self.coords.append([1.0, 0.0])
       self.coords.append([1.0, 1.0])
       
-      self.vortex.pos[2] = z_offset - self.height - z_step
-#      self.vortex.pos[2] = self.vortex.pos[2] + z_offset
+      self.vortex.pos[2] = z_offset - self.height
 
    def step(self):
       x,y,z = self.vortex.step()

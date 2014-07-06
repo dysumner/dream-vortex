@@ -1,4 +1,4 @@
-from dreamvortex.engines.engine import BaseParticle, BaseEngine
+from dreamvortex.engines.engine import BaseItem, BaseEngine
 from dreamvortex.vortex import Vortex
 from dreamvortex import settings, get_strip
 
@@ -9,10 +9,10 @@ from random import random, randint, uniform
 from math import sin, cos
 
 
-class BrushStroke(BaseParticle):
+class BrushStroke(BaseItem):
    
    def __init__(self, lifetime, vortex):
-      BaseParticle.__init__(self, lifetime, vortex)
+      BaseItem.__init__(self, lifetime, vortex)
 
       self.points = []
       self.coords = []

@@ -1,4 +1,4 @@
-from dreamvortex.engines.engine import BaseParticle, BaseEngine
+from dreamvortex.engines.engine import BaseItem, BaseEngine
 from dreamvortex.vortex import Vortex
 from dreamvortex import settings, get_dream
 
@@ -8,10 +8,10 @@ from vroom.core.color import color, white
 from random import random, randint
 
 
-class DreamImage(BaseParticle):
+class DreamImage(BaseItem):
    
    def __init__(self, lifetime):
-      BaseParticle.__init__(self, lifetime, None)
+      BaseItem.__init__(self, lifetime, None)
 
       points, texcoords = Vortex.image_strip()
       self.dream = Buffer(points)

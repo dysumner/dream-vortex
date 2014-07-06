@@ -20,17 +20,15 @@ class Particle(BaseParticle):
          settings['particle-transparency']]
       self.color = c
       
-      self.texture = ('data/particle.bmp')
-
    def step(self):
       self.vortex.step()
 
-   def draw(self):
-      self.buffer = PointCloud([x.vortex.pos for x in self.particles], \
-         [x.color for x in self.particles])
-      self.buffer.texture('data/particle.bmp')
-      self.buffer.pointSize(305.0)
-      self.buffer.draw(style='solid')
+#   def draw(self):
+#      self.buffer = PointCloud([x.vortex.pos for x in self.particles], \
+#         [x.color for x in self.particles])
+#      self.buffer.texture('data/particle.bmp')
+#      self.buffer.pointSize(305.0)
+#      self.buffer.draw(style='solid')
 
 class ParticleEngine(BaseEngine):
 
@@ -43,15 +41,15 @@ class ParticleEngine(BaseEngine):
    def draw(self):
       if not len(self.particles):
          return 
-#      self.buffer = PointCloud([x.vortex.pos for x in self.particles], [x.color for x in self.particles])
-#      self.buffer.sprite('data/particle.bmp')
-#      self.buffer.pointSize(305.0)
-#      self.buffer.draw()
-      for particle in self.buffer:
-         for particle in self.particles:
-            particle.texture.bind()
-            particle.draw()
-            particle.texture.unbind()
+      self.buffer = PointCloud([x.vortex.pos for x in self.particles], [x.color for x in self.particles])
+      self.buffer.sprite('data/particle.bmp')
+      self.buffer.pointSize(305.0)
+      self.buffer.draw()
+#      for particle in self.buffer:
+#         for particle in self.particles:
+#            particle.texture.bind()
+#            particle.draw()
+#            particle.texture.unbind()
 
    def spawn(self):
       if random() < 0.06:      # originally 0.1

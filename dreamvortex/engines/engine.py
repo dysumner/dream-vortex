@@ -1,4 +1,4 @@
-class BaseParticle:
+class BaseItem:      #changed name from BaseParticle to BaseItem
 
    def __init__(self, lifetime, vortex):
       self.lifetime = lifetime
