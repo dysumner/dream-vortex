@@ -19,7 +19,7 @@ class BrushStroke(BaseParticle):
 
       self.history = randint(15, 30)
       self.height = uniform(0.5, 3.25)
-
+      
       c = random()
 #      c = [0.2,0.2,0.2]
       self.color = [c, c, c, 1.0]   # gives the strips various intensities
@@ -49,8 +49,8 @@ class BrushStroke(BaseParticle):
          x = r * cos(self.vortex.theta)                        #added
          y = r * sin(self.vortex.theta)                        #added
          
-         self.points.append([x, y, z_t])             #orig z = -self.height
-         self.points.append([x, y, z_b])      #orig z = self.height
+         self.points.append([x, y, z_b])             #orig z = -self.height
+         self.points.append([x, y, z_t])             #orig z = self.height
 
          self.coords.append([x_tex, 0.0])          #orig used x
          self.coords.append([x_tex, 1.0])
@@ -60,11 +60,13 @@ class BrushStroke(BaseParticle):
          z_b += z_step
          z_t += z_step
 
-      self.points.append([x, y, z_b])                #orig z = -self.height
-      self.points.append([x, y, z_t])         #orig z = self.height
+      self.points.append([x, y, z_b])              #orig z = -self.height
+      self.points.append([x, y, z_t])              #orig z = self.height
 
       self.coords.append([1.0, 0.0])
       self.coords.append([1.0, 1.0])
+      
+      self.vortex.pos[2] = z_offset - self.height
 
    def step(self):
       x,y,z = self.vortex.step()
@@ -72,7 +74,7 @@ class BrushStroke(BaseParticle):
       self.points.append([x, y, z-self.height])
       self.points.append([x, y, z+self.height])
       self.points.pop(0)
-      self.points.pop(0)   # need pop twice
+      self.points.pop(0)   # need pop twice (empirically)
 
       self.buffer = Buffer(self.points)
       self.buffer.loadTexCoordData(self.coords)
