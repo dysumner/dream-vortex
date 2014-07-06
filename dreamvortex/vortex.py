@@ -19,7 +19,7 @@ class Vortex:
       return a + b * theta
 
 
-   def __init__(self, a, b, r_step, z_step):
+   def __init__(self, a, b, theta_step, z_step):
       # Set vortex parameters
       self.a, self.b = a, b # spiral parameters
       self.theta_step = theta_step  # rotational step size
