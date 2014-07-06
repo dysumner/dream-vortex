@@ -1,6 +1,8 @@
 # Settings for dream vortex application
 # 
+# General display settings
 
+z-offset: -10.
 
 # General vortex settings
 # 
@@ -13,7 +15,7 @@ b:
    max: 0.7
 
 delta-theta: 0.1     #originally 0.1
-delta-z: 0.2
+delta-z: 0.2         #originally 0.2
 
 # vortex-lines settings
 #
@@ -38,6 +40,20 @@ particle-radius:
 particle-color-range:
    min: 0.3
    max: 0.8
+
+particle-red-range:
+   min: 0.3
+   max: 0.8
+
+particle-blue-range:
+   min: 0.3
+   max: 0.8
+
+particle-green-range:
+   min: 0.
+   max: 0.3
+
+particle-transparency: 0.65
 
 # vortex-strip-static
 #

@@ -24,30 +24,44 @@ class BrushStroke(BaseParticle):
 #      c = [0.2,0.2,0.2]
       self.color = [c, c, c, 1.0]   # gives the strips various intensities
       
-      # To put a random dream on the strip
+      # Puts a random dream on the strip
       self.texture = get_strip()
 
       self.initialize()
       self.step()
 
    def initialize(self):
-      r = self.vortex.a + self.vortex.b * self.vortex.theta
-      x = r * cos(self.vortex.theta)
-      y = r * sin(self.vortex.theta)
+#      r = self.vortex.a + self.vortex.b * self.vortex.theta
+#      x = r * cos(self.vortex.theta)
+#      y = r * sin(self.vortex.theta)
 
-      x = 0.0
+      x_tex = 0.0                                  #orig x
       dx = 1.0 / self.history
+      theta_step = settings['delta-theta']         #added
+      z_step = settings['delta-z']
+      z_offset = settings['z-offset']              #start low on 3d TV
+      
+      z_b = -2*self.height + z_offset - (self.history * z_step)
+      z_t = z_offset - (self.history * z_step)
 
       for _ in range(self.history):
-         self.points.append([x, y, -self.height])
-         self.points.append([x, y,  self.height])
+         r = self.vortex.a + self.vortex.b * self.vortex.theta #added
+         x = r * cos(self.vortex.theta)                        #added
+         y = r * sin(self.vortex.theta)                        #added
+         
+         self.points.append([x, y, z_t])             #orig z = -self.height
+         self.points.append([x, y, z_b])      #orig z = self.height
 
-         self.coords.append([x, 0.0])
-         self.coords.append([x, 1.0])
-         x += dx
+         self.coords.append([x_tex, 0.0])          #orig used x
+         self.coords.append([x_tex, 1.0])
+         
+         x_tex += dx
+         self.vortex.theta += theta_step           #added
+         z_b += z_step
+         z_t += z_step
 
-      self.points.append([x, y, -self.height])
-      self.points.append([x, y,  self.height])
+      self.points.append([x, y, z_b])                #orig z = -self.height
+      self.points.append([x, y, z_t])         #orig z = self.height
 
       self.coords.append([1.0, 0.0])
       self.coords.append([1.0, 1.0])
@@ -58,15 +72,18 @@ class BrushStroke(BaseParticle):
       self.points.append([x, y, z-self.height])
       self.points.append([x, y, z+self.height])
       self.points.pop(0)
-      self.points.pop(0)
+      self.points.pop(0)   # need pop twice
 
       self.buffer = Buffer(self.points)
       self.buffer.loadTexCoordData(self.coords)
       self.buffer.renderMode('triangles:strip')
 
    def draw(self):
-      if self.age < self.history:
-         return
+      # strips aren't initialized into the proper position <-mostly fixed now, 
+      # so wait until they're iterated enough to be correct
+#      if self.age < self.history:  
+#         return
+         
       color(self.color)
       self.buffer.draw(style='solid')
 
@@ -79,7 +96,6 @@ class VortexEngine(BaseEngine):
       
    def add_particle(self):
       self.particles.append(BrushStroke(randint(400, 500), Vortex.random_vortex()))
-      self.texture = get_strip()    # added to put dream images on strips
 
    def draw(self):
       for particle in self.particles:
@@ -88,9 +104,7 @@ class VortexEngine(BaseEngine):
          particle.texture.unbind()
 
    def spawn(self):
-      if random() < 0.07:    # originally 0.05
-#         for _ in range(randint(1, 5)):
-#            self.add_particle()
+      if random() < 0.07:    
          self.add_particle()
 
 

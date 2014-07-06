@@ -4,9 +4,9 @@ from dreamvortex import settings
 
 class Vortex:
    ''' The vortex dynamics are uniquely defined by the following parameters:
-          a -- spiral parameter
-          b -- spiral parameter
-          r_step -- rotational step size
+          a -- spiral parameter  = radius equiavlent at theta = 0
+          b -- spiral parameter  = expansion of spirals
+          theta_step -- rotational step size
           z_step -- vertical step size
 
        The Vortex class encapsulates this data and additionally stores a current
@@ -29,7 +29,7 @@ class Vortex:
       # We begin with a random angle and a height of zero - dys changed to -10
       self.theta = random()*2.0*pi 
       r = Vortex.radius(self.a, self.b, self.theta)
-      self.pos = [r*cos(self.theta), r*sin(self.theta), -10.0]
+      self.pos = [r*cos(self.theta), r*sin(self.theta), settings['z-offset']]
    
    def __str__(self):
       return '(vortex a={}, b={}, dr={}, dz={})'.format(self.a, self.b, self.r_step, self.z_step)
