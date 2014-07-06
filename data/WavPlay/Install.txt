@@ -1,0 +1,18 @@
+
+Installation:
+
+WavPlay.py requires PyGame
+So, use apt-get or whatever you use to install this package.
+
+Files:
+	WavPlay.py: The Python module to import
+	UseWavPlay.py: Example script that uses WavPlay
+		-- This is what you should use when employing in other code.
+			It's a very minimal interface.
+
+For now, it should be run in the directory with the *.wav sound files.
+This can be changed.
+
+To run:
+
+python UseWavePlay.py
