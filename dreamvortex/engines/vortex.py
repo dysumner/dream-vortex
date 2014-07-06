@@ -88,8 +88,9 @@ class VortexEngine(BaseEngine):
          particle.texture.unbind()
 
    def spawn(self):
-      if random() < 0.02:    # originally 0.05
-         for _ in range(randint(1, 5)):
-            self.add_particle()
+      if random() < 0.07:    # originally 0.05
+#         for _ in range(randint(1, 5)):
+#            self.add_particle()
+         self.add_particle()
 
 

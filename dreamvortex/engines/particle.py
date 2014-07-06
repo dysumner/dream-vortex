@@ -15,7 +15,7 @@ class Particle(BaseParticle):
       c = settings.get_uniform('particle-color-range')
 #      self.color = [c, 0.8, 0.3, 0.65]
       r,g,b = settings.get_uniform('particle-color-range'),settings.get_uniform('particle-color-range'),settings.get_uniform('particle-color-range')
-      self.color = [r, g, 0.3*b, 0.65]
+      self.color = [.5*r, .2*g, b, 0.65]
 
    def step(self):
       self.vortex.step()
@@ -34,10 +34,12 @@ class ParticleEngine(BaseEngine):
          return 
       self.buffer = PointCloud([x.vortex.pos for x in self.particles], [x.color for x in self.particles])
       self.buffer.sprite('data/particle.bmp')
-      self.buffer.pointSize(105.0)
+      self.buffer.pointSize(305.0)
       self.buffer.draw()
 
    def spawn(self):
-      if random() < 0.01:      # originally 0.1
-         for _ in range(randint(1, 5)):
-            self.add_particle()
+      if random() < 0.06:      # originally 0.1
+#         for _ in range(randint(1, 5)):
+#            self.add_particle()
+         self.add_particle()
+

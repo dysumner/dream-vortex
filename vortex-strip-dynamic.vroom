@@ -13,7 +13,7 @@ def init():
 
 def gl_init():
    # for drawing a single dream on the strips use the following line and display_orig()
-#   Global.texture = Texture.from_file('data/PNG_Files/Dawn_Vortex_Strip_2.png')
+   Global.texture = Texture.from_file('data/PNG_Files/Dawn_Vortex_Strip_2.png')
    
    # Load in various strip images as textures
    load_strips()
@@ -21,7 +21,7 @@ def gl_init():
 def frame():
    Global.engine.step()
 
-def display():    # to draw dreams on strips - image mapping is now in engines.vortex.py
+def display_multi():    # to draw dreams on strips - image mapping is now in engines.vortex.py
    lighting(False)
 
    color(0.3)
@@ -37,7 +37,7 @@ def display():    # to draw dreams on strips - image mapping is now in engines.v
 
    Global.engine.draw()
 
-def display_orig():
+def display():
    lighting(False)
 
    color(0.3)

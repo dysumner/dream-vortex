@@ -45,6 +45,10 @@ def display():
 def draw_grid():
    color(0.3)
    draw(grid, 40, 40, 20, 20).at([-20, -20, -10])
+   pushMatrix()
+   translate(-20, -20, -50)
+   cube(40.0, style='solid')
+   popMatrix()
 
 def draw_vortex():
    transparency(True)
