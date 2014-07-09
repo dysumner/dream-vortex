@@ -1,4 +1,4 @@
-from dreamvortex.engines.engine import BaseParticle, BaseEngine
+from dreamvortex.engines.engine import BaseItem, BaseEngine
 from dreamvortex.vortex import Vortex
 from dreamvortex import settings
 
@@ -7,10 +7,10 @@ from vroom.rendering.point_cloud import PointCloud
 from random import random, randint
 
 
-class Particle(BaseParticle):
+class Particle(BaseItem):
    
    def __init__(self, lifetime, vortex):
-      BaseParticle.__init__(self, lifetime, vortex)
+      BaseItem.__init__(self, lifetime, vortex)
 
 #      c = settings.get_uniform('particle-color-range')
 #      self.color = [c, 0.8, 0.3, 0.65]
@@ -41,9 +41,10 @@ class ParticleEngine(BaseEngine):
    def draw(self):
       if not len(self.particles):
          return 
-      self.buffer = PointCloud([x.vortex.pos for x in self.particles], [x.color for x in self.particles])
+      self.buffer = PointCloud([x.vortex.pos for x in self.particles], \
+            [x.color for x in self.particles])
       self.buffer.sprite('data/particle.bmp')
-      self.buffer.pointSize(305.0)
+      self.buffer.pointSize(300.0)
       self.buffer.draw()
 #      for particle in self.buffer:
 #         for particle in self.particles:

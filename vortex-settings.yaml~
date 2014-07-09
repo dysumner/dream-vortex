@@ -2,7 +2,10 @@
 # 
 # General display settings
 
-z-offset: -10.
+x-offset: 0.
+y-offset: 0.
+z-offset: -4.
+scale: 0.25
 
 # General vortex settings
 # 
@@ -14,8 +17,8 @@ b:
    min: 0.3
    max: 0.7
 
-delta-theta: 0.01     #originally 0.1
-delta-z: 0.02         #originally 0.2
+delta-theta: 0.1     #originally 0.1
+delta-z: 0.2         #originally 0.2
 
 # vortex-lines settings
 #
@@ -53,7 +56,7 @@ particle-green-range:
    min: 0.
    max: 0.3
 
-particle-transparency: 0.65
+particle-transparency: 0.3
 
 # vortex-strip-static
 #

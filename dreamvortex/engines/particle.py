@@ -1,5 +1,6 @@
 from dreamvortex.engines.engine import BaseItem, BaseEngine
 from dreamvortex.vortex import Vortex
+from dreamvortex.WavPlay import InitWavPlay, RandPlay
 from dreamvortex import settings
 
 from vroom.rendering.point_cloud import PointCloud
@@ -41,9 +42,10 @@ class ParticleEngine(BaseEngine):
    def draw(self):
       if not len(self.particles):
          return 
-      self.buffer = PointCloud([x.vortex.pos for x in self.particles], [x.color for x in self.particles])
+      self.buffer = PointCloud([x.vortex.pos for x in self.particles], \
+            [x.color for x in self.particles])
       self.buffer.sprite('data/particle.bmp')
-      self.buffer.pointSize(305.0)
+      self.buffer.pointSize(300.0)
       self.buffer.draw()
 #      for particle in self.buffer:
 #         for particle in self.particles:
@@ -56,4 +58,5 @@ class ParticleEngine(BaseEngine):
 #         for _ in range(randint(1, 5)):
 #            self.add_particle()
          self.add_particle()
+         RandPlay()
 

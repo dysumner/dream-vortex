@@ -14,8 +14,8 @@ time.sleep(2)
 
 # Random time between playing samples
 MinDelay = 1
-MaxDelay = 6
-
+MaxDelay = 10
+   	
 while True:
 	RandPlay()
 	time.sleep(randrange(MinDelay,MaxDelay))

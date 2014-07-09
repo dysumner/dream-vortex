@@ -1,0 +1,51 @@
+#!/usr/bin/env vroom-wrapper
+
+# based on demo.vroom
+# intent is to test the sound w/ Jim's WavPLay
+
+from vroom import * 
+
+from dreamvortex.WavPlay import InitWavPlay, RandPlay
+from random import randrange
+
+# Functions
+
+def toggleRotate(toggle):
+   Global.animate = not Global.animate
+
+# vroom callbacks
+
+def init():
+   setMainMenuTitle('Vroom Demo')
+   addMainMenuItem('Toggle Rotate', toggleRotate, type='toggle')
+
+   Global.animate = False
+   Global.modelAngles = [0.0, 0.0, 0.0]
+   
+   #to play sound
+   nSamples = 20
+   InitWavPlay(nSamples)
+
+def display():
+   lighting(False)
+   color(white)
+   
+   if random() < 0.01:
+      RandPlay()
+
+   pushMatrix()
+   rotate(Global.modelAngles)
+   translate(-2.0, -2.0, -2.0)
+   cube(4.0)
+   popMatrix()
+
+def frame():
+   if not Global.animate:
+      return
+
+   time = elapsedTime()
+   rotationalSpeeds = [9.0, -31.0, 19.0]
+
+   Global.modelAngles = [(angle+speed*time)%360.0 
+                     for (angle, speed) in zip(Global.modelAngles, rotationalSpeeds)]
+

@@ -39,10 +39,12 @@ class Strip(BaseItem):
       dx = 1.0 / self.history
       theta_step = settings['delta-theta']         #added
       z_step = settings['delta-z']
-      z_offset = settings['z-offset']              #start low on 3d TV
+#      z_offset = settings['z-offset']              #start low on 3d TV
       
-      z_b = -2*self.height + z_offset - (self.history * z_step)
-      z_t = z_offset - (self.history * z_step)
+#      z_b = -2*self.height + z_offset - (self.history * z_step)
+#      z_t = z_offset - (self.history * z_step)
+      z_b = -2*self.height - (self.history * z_step)
+      z_t = -self.history * z_step
 
       for _ in range(self.history):
          r = self.vortex.a + self.vortex.b * self.vortex.theta #added
@@ -66,7 +68,7 @@ class Strip(BaseItem):
       self.coords.append([1.0, 0.0])
       self.coords.append([1.0, 1.0])
       
-      self.vortex.pos[2] = z_offset - self.height
+      self.vortex.pos[2] = - self.height
 
    def step(self):
       x,y,z = self.vortex.step()

@@ -29,8 +29,7 @@ class Vortex:
       # Begin with a random angle and a height of z_offset
       self.theta = random()*2.0*pi 
       r = Vortex.radius(self.a, self.b, self.theta)
-      self.pos = [r*cos(self.theta), r*sin(self.theta), settings['z-offset']]
-            # may need to adjust z value in previous line
+      self.pos = [r*cos(self.theta), r*sin(self.theta), 0.]
    
    def __str__(self):
       return '(vortex a={}, b={}, dtheta={}, dz={})'.format(self.a, self.b, self.theta_step, self.z_step)

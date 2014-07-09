@@ -1,13 +1,22 @@
 #!/usr/bin/env vroom-wrapper
 
+'''
+Dawn Sumner, Djerassi, July 2014
+Working to be able to select an object and do something with it.  
+Based heavily on drag.vroom.
+
+need to make the defs from drag responsive to the different objects - need a wrapping structure to do so...
+'''
 from vroom import *
 import vroom.extra.PLY
+from math import sqrt
 
 # Functions
 
-def clearPoints(button):
-   Global.points = point_list()
-
+def hit(pos_obj, cursor):
+   dist = sum([(a-b)*(a-b) for a,b in zip(pos_obj, cursor)])
+   return sqrt(dist) < Global.size
+   
 def button0(pos):
    print 'button 0'
    
@@ -18,60 +27,61 @@ def button1(pos):
 # vroom callbacks
 
 def init():
-#   Global.c = 0.3
 
    Global.emblem = []
    Global.num = 2
 
-   Global.lighting = BooleanOption()
+   Global.size = 0.5
+ 
+   Global.dragging = []
+   Global.hover = []
+   Global.color = []
+   x, y, z = 0., 0., 0.
 
-   addMainMenuItem('lighting', lambda x: Global.lighting.toggle(), type='toggle')
-   addMainMenuItem('debug', lambda x: tracker_debug(x.getToggle()), type='toggle')
-#   addMainMenuItem('clear', clearPoints)
-
-   filename = get_resource('bunny.ply')
-
-   Global.emblem = Mesh.from_ply(filename, False)
-#   for i in range(Global.num):
-#      Global.emblem.append(i)
-#      Global.emblem[i] = Mesh.from_ply(filename, False)
-#      Global.emblem.append(Mesh.from_ply(filename, False))
-
-def gl_init():    
-   Global.emblem.enable_tracking() 
-   
-#   for i in range(Global.num):
-#      Global.emblem[i].engable_tracking()
+   for i in range(Global.num):
+      Global.emblem.append([x,y,z])
+      Global.dragging.append(False)
+      Global.hover.append(False)
+      c = float(i)/float(Global.num)
+      Global.color.append([0.5*c, 0., c])
+      x += 1.
+      z += 1.
       
 def frame(): pass
 
 def display():
 
-   # from bunny.vroom
-   lighting(Global.lighting)
-   c = [0.0, 0.5, 0.1]
-
    for i in range(Global.num):
-      material(c) if Global.lighting else color(c)
-      style = 'solid' if Global.lighting else 'wireframe'
-      tr = float(i)*0.25
-      pushMatrix()
-      translate([tr,0.,tr])		
-      Global.emblem.draw(style=style)
-#      Global.emblem[i].draw(style=style)
-      popMatrix()
-      
-      if c[2] < 0.9:
-         c[2] += 0.5
+      if Global.dragging[i]:
+         color(red)
+      elif Global.hover[i]:
+         color(green)
       else:
-         c[2] = 0.1
-
-
-def button_press(pos, button):
-   print ' -- button_press (pos={}, button={})'.format(pos, button)
-   if button == 0:
-      button0(pos)
-   elif button == 1:
-      button1(pos)
+         color(blue)
    
+      pushMatrix()
+      translate(Global.emblem[i])
+      sphere(Global.size)
+      popMatrix()
+
+def button_press(pos, button):      
+   print 'button_press: pos={}'.format(pos)
+
+   for i in range(len(Global.emblem)):  
+      if hit(Global.emblem[i],pos):
+         print '!!!!! HIT !!!!!'
+         Global.dragging[i] = True
+    
+def button_release(pos, button):
+   print 'button_release: pos={}'.format(pos)
+
+   for i in range(len(Global.emblem)):  
+      Global.dragging[i] = False
+
+def motion(pos, button):
+   for i in range(len(Global.emblem)):  
+      if Global.dragging[i]:
+        Global.emblem[i] = pos
+      else:
+         Global.hover[i] = hit(Global.emblem[i], pos) 
 

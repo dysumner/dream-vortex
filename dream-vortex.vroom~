@@ -3,6 +3,8 @@
 # NAME: dream-vortex.vroom
 #
 
+#from WavPlay import InitWavPlay,RandPlay,PlayThis
+
 from vroom import *
 
 from dreamvortex import settings, load_dreams, load_strips
@@ -12,23 +14,32 @@ from dreamvortex.engines.strip import StripEngine
 from dreamvortex.engines.dream import DreamEngine
 
 from dreamvortex.vortex import Vortex
+from dreamvortex.WavPlay import InitWavPlay, RandPlay
 
 from math import sin, cos, pi
 from random import random, randint
 import os
+
+# Vroom Callbacks
 
 #@LiveCoding.no_update
 def init():
    Global.strip = StripEngine()
    Global.particles = ParticleEngine()
    Global.dreams = DreamEngine()
+   
+   Global.scale = settings['scale']
+   Global.trans = [settings['x-offset'], settings['y-offset'], \
+                  settings['z-offset']]
+                  
+   InitWavPlay(20)
 
 def gl_init():
-   load_dreams()
+   load_dreams()  # to show dreams static in vortex
    load_strips()  # to put dreams on strips
 
    Global.floor_texture = Texture.from_file(get_resource( \
-         'floors/DV_Source3_Darkcentered.png'))
+         'floors/DV_Source3_188Ftr.png'))
 
 #   Global.brush_texture = Texture.from_file(get_resource('brush-white.png'))
 
@@ -39,16 +50,29 @@ def frame():
 
 def display():
    lighting(False)
-
+   
+   pushMatrix()
+   translate(Global.trans)    # moves vortex to a good place on TV
+   scale(Global.scale)        # makes the vortex a good scale
+   
    draw_floor()
 #   draw_dreams()
    draw_strip()
+   
+   translateZ(1.5)      # draws the particles slightly above the floor
    draw_particles()
+   
+   popMatrix()
+
+################################
+# Functions
 
 def draw_floor():
    # a grid
-#   color(0.3)     # for some reason, color is not being recognized
-#   draw(grid, 40, 40, 20, 20).at([-20, -20, -10])
+   #color is a special vroom command; needed to avoid openGL problems
+#   color(0.3) 
+
+#   draw(grid, 40, 40, 20, 20).at([-20, -20, 0])
 
    # a cube
    pushMatrix()
@@ -57,7 +81,8 @@ def draw_floor():
    popMatrix()
 
    # an image
-   z = settings['z-offset']
+#   z = settings['z-offset']
+   z = 0.
    
    points = [[-50.,-50., z],[50., -50., z],[-50., 50., z],[50.,50.,z]]
    coords = [[0.,0.],[1.,0.],[0.,1.],[1.,1.]]
