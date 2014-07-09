@@ -1,0 +1,77 @@
+#!/usr/bin/env vroom-wrapper
+
+from vroom import *
+import vroom.extra.PLY
+
+# Functions
+
+def clearPoints(button):
+   Global.points = point_list()
+
+def button0(pos):
+   print 'button 0'
+   
+def button1(pos):
+   print 'button 1'
+      
+
+# vroom callbacks
+
+def init():
+#   Global.c = 0.3
+
+   Global.emblem = []
+   Global.num = 2
+
+   Global.lighting = BooleanOption()
+
+   addMainMenuItem('lighting', lambda x: Global.lighting.toggle(), type='toggle')
+   addMainMenuItem('debug', lambda x: tracker_debug(x.getToggle()), type='toggle')
+#   addMainMenuItem('clear', clearPoints)
+
+   filename = get_resource('bunny.ply')
+
+   Global.emblem = Mesh.from_ply(filename, False)
+#   for i in range(Global.num):
+#      Global.emblem.append(i)
+#      Global.emblem[i] = Mesh.from_ply(filename, False)
+#      Global.emblem.append(Mesh.from_ply(filename, False))
+
+def gl_init():    
+   Global.emblem.enable_tracking() 
+   
+#   for i in range(Global.num):
+#      Global.emblem[i].engable_tracking()
+      
+def frame(): pass
+
+def display():
+
+   # from bunny.vroom
+   lighting(Global.lighting)
+   c = [0.0, 0.5, 0.1]
+
+   for i in range(Global.num):
+      material(c) if Global.lighting else color(c)
+      style = 'solid' if Global.lighting else 'wireframe'
+      tr = float(i)*0.25
+      pushMatrix()
+      translate([tr,0.,tr])		
+      Global.emblem.draw(style=style)
+#      Global.emblem[i].draw(style=style)
+      popMatrix()
+      
+      if c[2] < 0.9:
+         c[2] += 0.5
+      else:
+         c[2] = 0.1
+
+
+def button_press(pos, button):
+   print ' -- button_press (pos={}, button={})'.format(pos, button)
+   if button == 0:
+      button0(pos)
+   elif button == 1:
+      button1(pos)
+   
+

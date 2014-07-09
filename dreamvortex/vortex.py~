@@ -60,9 +60,9 @@ class Vortex:
       a = settings.get_uniform('a')
       b = settings.get_uniform('b')
 #      theta_step = settings['delta-theta']
-      theta_step = settings['delta-theta'] #/ a
+      theta_step = settings['delta-theta'] / (1.*a)
 #     z_step = settings['delta-z']
-      z_step = settings['delta-z'] #/ a
+      z_step = settings['delta-z'] / (0.5*a)
       return Vortex(a, b, theta_step, z_step)
 
    @staticmethod

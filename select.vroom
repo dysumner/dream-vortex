@@ -1,0 +1,67 @@
+#!/usr/bin/env vroom-wrapper
+
+from vroom import *
+import vroom.extra.PLY
+
+# Functions
+
+def clearPoints(button):
+   Global.points = point_list()
+
+def button0(pos):
+   print 'button 0'
+   
+def button1(pos):
+   print 'button 1'
+      
+
+# vroom callbacks
+
+def init():
+#   Global.c = 0.3
+
+   Global.emblem = []
+   Global.num = 2
+
+   Global.distance = 0.5
+ 
+   Global.dragging = []
+   Global.hover = []
+   Global.color = []
+   x, y, z = 0., 0., 0.
+
+   for i in range(Global.num):
+      Global.emblem.append(x,y,z)
+      Global.dragging.append(False)
+      Global.hover.append(False)
+      c = float(i)/float(Global.num)
+      Global.color.append([0.5*c, 0., c])
+      x,y,z += 1.
+      
+def frame(): pass
+
+def display():
+
+   for i in range(Global.num):
+      if Global.dragging[i]:
+         color(red)
+      elif Global.hover[i]:
+         color(green)
+      else:
+         color(blue)
+   
+      pushMatrix()
+      translate(Global.position)
+      sphere(Global.size)
+      popMatrix()
+
+
+
+def button_press(pos, button):
+   print ' -- button_press (pos={}, button={})'.format(pos, button)
+   if button == 0:
+      button0(pos)
+   elif button == 1:
+      button1(pos)
+   
+
