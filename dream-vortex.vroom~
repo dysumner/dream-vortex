@@ -3,15 +3,16 @@
 # NAME: dream-vortex.vroom
 #
 
-#from WavPlay import InitWavPlay,RandPlay,PlayThis
+#from dreamvortex.WavPlay import InitWavPlay,RandPlay,PlayThis
 
 from vroom import *
 
-from dreamvortex import settings, load_dreams, load_strips
+from dreamvortex import settings, load_dreams, load_strips, load_emblems_flat
 
 from dreamvortex.engines.particle import ParticleEngine
 from dreamvortex.engines.strip import StripEngine
 from dreamvortex.engines.dream import DreamEngine
+from dreamvortex.engines.emblem_flat import EmblemFlatEngine
 
 from dreamvortex.vortex import Vortex
 from dreamvortex.WavPlay import InitWavPlay, RandPlay
@@ -27,19 +28,21 @@ def init():
    Global.strip = StripEngine()
    Global.particles = ParticleEngine()
    Global.dreams = DreamEngine()
+   Global.emblems_flat = EmblemFlatEngine()
    
    Global.scale = settings['scale']
    Global.trans = [settings['x-offset'], settings['y-offset'], \
                   settings['z-offset']]
                   
-   InitWavPlay(20)
+   InitWavPlay(50)
 
 def gl_init():
    load_dreams()  # to show dreams static in vortex
    load_strips()  # to put dreams on strips
+   load_emblems_flat()  # to put dreams on emblems
 
    Global.floor_texture = Texture.from_file(get_resource( \
-         'floors/DV_Source3_188Ftr.png'))
+         'floors/DV_Source3_Darker_Blur.png'))
 
 #   Global.brush_texture = Texture.from_file(get_resource('brush-white.png'))
 
@@ -47,6 +50,7 @@ def frame():
    Global.strip.step()
    Global.particles.step()
    Global.dreams.step()
+   Global.emblems_flat.step()
 
 def display():
    lighting(False)
@@ -54,10 +58,12 @@ def display():
    pushMatrix()
    translate(Global.trans)    # moves vortex to a good place on TV
    scale(Global.scale)        # makes the vortex a good scale
+#   rotateY(90)
    
    draw_floor()
 #   draw_dreams()
-   draw_strip()
+   draw_strips()
+#   draw_emblems_flat()
    
    translateZ(1.5)      # draws the particles slightly above the floor
    draw_particles()
@@ -70,15 +76,9 @@ def display():
 def draw_floor():
    # a grid
    #color is a special vroom command; needed to avoid openGL problems
-#   color(0.3) 
+   color(0.3) 
 
 #   draw(grid, 40, 40, 20, 20).at([-20, -20, 0])
-
-   # a cube
-   pushMatrix()
-   translate(-20, -20, -50)
-#   cube(40.0, style='solid')
-   popMatrix()
 
    # an image
 #   z = settings['z-offset']
@@ -90,12 +90,13 @@ def draw_floor():
    floor.loadTexCoordData(coords)
    floor.renderMode('triangles:strip')
    
+   transparency(True)
    color(1.0)
    Global.floor_texture.bind()
    floor.draw(style='solid')
    Global.floor_texture.unbind()
 
-def draw_strip():
+def draw_strips():
    transparency(True)
 
    glBlendFunc(GL_SRC_ALPHA, GL_ONE); 
@@ -107,24 +108,22 @@ def draw_strip():
 
    Global.strip.draw()
 
-def draw_strip_orig():    # may not work due to changes in engines.vortex
-   transparency(True)
-
-   Global.brush_texture.bind()
-
-   glDepthMask(GL_FALSE)
-   glDisable(GL_CULL_FACE)
-
-   Global.strip.draw()
-
-   Global.brush_texture.unbind()
-
 def draw_particles():
    Global.particles.draw()
+   
+def draw_emblems_flat():
+   transparency(True)
+
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE); 
+
+   glDepthMask(GL_FALSE)     
+   glDisable(GL_CULL_FACE)
+   glCullFace(GL_BACK)
+   
+#   Global.emblems_flat.draw()
 
 def draw_dreams():
-#   transparency(True)
-   transparency(False)
+   transparency(True)
 
    glDisable(GL_CULL_FACE)
 

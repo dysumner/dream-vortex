@@ -38,3 +38,15 @@ def load_strips():
 def get_strip():
    return strips[randint(0, len(strips)-1)]
 
+# Added to put dreams on emblems (flat version)
+emblem_images = [os.path.join('emblems_flat', img) for img in os.listdir('data/emblems_flat')]
+
+emblems_flat = []
+
+def load_emblems_flat():
+   global emblems
+   emblems = [Texture.from_file(get_resource(img)) for img in emblem_images]
+
+def get_emblem_flat():
+   return emblems[randint(0, len(emblems_flat)-1)]
+

@@ -2,10 +2,10 @@
 # 
 # General display settings
 
-x-offset: 0.
+x-offset: 0.   # for horizontal -5
 y-offset: 0.
-z-offset: -4.
-scale: 0.2
+z-offset: -4.  # for horizontal: 0
+scale: 0.15
 
 # General vortex settings
 # 

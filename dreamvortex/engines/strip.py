@@ -20,7 +20,7 @@ class Strip(BaseItem):
       self.history = randint(15, 30)
       self.height = uniform(0.5, 3.25)
       
-      c = random()
+      c = uniform(0.000001, 0.8)
 #      c = [0.2,0.2,0.2]
       self.color = [c, c, c, 1.0]   # gives the strips various intensities
       
@@ -28,21 +28,16 @@ class Strip(BaseItem):
       self.texture = get_strip()
 
       self.initialize()
-      self.step()
+      self.step()     # This step() results in self.buffer() being defined
 
    def initialize(self):
-#      r = self.vortex.a + self.vortex.b * self.vortex.theta
-#      x = r * cos(self.vortex.theta)
-#      y = r * sin(self.vortex.theta)
 
       x_tex = 0.0                                  #orig x
       dx = 1.0 / self.history
       theta_step = settings['delta-theta']         #added
-      z_step = settings['delta-z']
-#      z_offset = settings['z-offset']              #start low on 3d TV
       
-#      z_b = -2*self.height + z_offset - (self.history * z_step)
-#      z_t = z_offset - (self.history * z_step)
+      # z_b, z_t used to place the strip below the floor & have it emerge
+      z_step = self.vortex.z_step
       z_b = -2*self.height - (self.history * z_step)
       z_t = -self.history * z_step
 
@@ -69,6 +64,7 @@ class Strip(BaseItem):
       self.coords.append([1.0, 1.0])
       
       self.vortex.pos[2] = - self.height
+#      print self.points[0], self.points[1]
 
    def step(self):
       x,y,z = self.vortex.step()
@@ -83,10 +79,6 @@ class Strip(BaseItem):
       self.buffer.renderMode('triangles:strip')
 
    def draw(self):
-      # strips aren't initialized into the proper position <-mostly fixed now, 
-      # so wait until they're iterated enough to be correct
-#      if self.age < self.history:  
-#         return
          
       color(self.color)
       self.buffer.draw(style='solid')
@@ -103,6 +95,7 @@ class StripEngine(BaseEngine):
 
    def draw(self):
       for particle in self.particles:
+#         print particle.texture
          particle.texture.bind()
          particle.draw()
          particle.texture.unbind()

@@ -28,9 +28,8 @@ def get_dream():
    
 # Added to put dreams on strips
 strip_images = [os.path.join('strips', img) for img in os.listdir('data/strips')]
-print strip_images
 
-strips = None
+strips = []
 
 def load_strips():
    global strips
@@ -38,4 +37,16 @@ def load_strips():
 
 def get_strip():
    return strips[randint(0, len(strips)-1)]
+
+# Added to put dreams on emblems
+emblem_images = [os.path.join('emblems', img) for img in os.listdir('data/emblems')]
+
+emblems = []
+
+def load_emblems():
+   global emblems
+   emblems = [Texture.from_file(get_resource(img)) for img in emblem_images]
+
+def get_emblem():
+   return emblems[randint(0, len(emblems)-1)]
 
