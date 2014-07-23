@@ -4,6 +4,7 @@
 number: 2
 
 '1': 'shoe.ply'
+dream-image-name1: 'Monster_Stomping_My_Husband.jpg'
 color1: [1.0,0.,0.]
 center1: [-0.17,-0.47,-0.67]  # offset of center from origin
 scale1: 5.
@@ -12,9 +13,10 @@ lifetime1:
    max: 6000
    
 '2': 'sphere.ply'
+dream-image-name2: 'Daisies_Github.png'
 color2: [1.,1.,0.]
-center2: [100.,0.,0.]
-scale2: 0.01
+center2: [100.,0.,0.]      # need offset to see spiral
+scale2: 0.01               # offset so large because scaled so sm
 lifetime2:
    min: 4000
    max: 6000

@@ -1,58 +1,91 @@
 #!/usr/bin/env vroom-wrapper
 
 from vroom import *
+
+from dreamvortex import settings, load_dreams, load_strips, load_emblems, get_dream
 from dreamvortex.general_utilities import transform
 
+# import object types
 from dreamvortex.environment_obj import Floor
-from dreamvortex.engines.obj import Obj
 from dreamvortex.engines.particle_single import Particle
 from dreamvortex.engines.strip_single import Strip
 from dreamvortex.engines.emblem_multi import Emblem
-
-from dreamvortex import settings, load_strips, load_emblems
+from dreamvortex.engines.dream_single import DreamImage
 
 # for sound
 from dreamvortex.WavPlay import InitWavPlay
 
+from random import uniform, randint
+
 a = []      # the list of objects to draw
+
+Global.dream_scene = 1
+Global.d = 0            # number of dreams in scene 2
    
+###### Vroom Callbacks ######
+
 def init():
 
-   # make environment objects
-   a.append(Floor())
-   
    # initialize sound files
    InitWavPlay(50)
+   
       
 def gl_init():
 
+   Global.num_dreams = load_dreams()  # for scene 2
    load_strips()  # to put dreams on strips
    load_emblems() # to get the meshes  # not used yet
+   
    Global.filename = [get_resource('emblems/shoe.ply'),
          get_resource('emblems/sphere.ply')]
+   
       
-   # assign a texture to the floor - must be w/in gl_init
-   a[0].texture = Texture.from_file(get_resource( \
-         'floors/DV_Source3_Darker_Blur.png'))
-       
+   # make environment objects
+   tex = Texture.from_file(get_resource('floors/DV_Source3_Darker_Blur.png'))
+   corners = [[-50.,-50., 0.],[50., -50., 0.],[-50., 50., 0.],[50.,50.,0.]]
+   a.append(Floor(corners, tex))
+   print 'num dreams', Global.num_dreams
+                  
+   # for debugging
+   a.insert(0,Emblem())
+   
+   
 def frame():
 
    for item in a:
       item.step()
-      
-   # Add new items if needed
-   if random() < 0.05:
-      a.append(Particle())
-      
-   if random() < 0.05:
-      a.append(Strip())
-      
-   if random() < 0.001:
-      a.insert(0,Emblem())    # put non-transparent obj first
-#      a[0].mesh.enable_tracking()
-       
+         
+   if Global.dream_scene == 1:
+      # Add new items
+      if random() < 0.05:
+         a.append(Particle())
+         
+      if random() < 0.05:
+         a.append(Strip())
+         
+      if random() < 0.001:
+         a.insert(0,Emblem())    # put non-transparent obj first
+         a[0].mesh.enable_tracking()
+                  
+   elif Global.dream_scene == 2: 
+#      if Global.d < 4 or len(a) < 6:
+      if len(a) < 6:
+         num = randint(0, Global.num_dreams-1)
+         a.append(DreamImage(num))
+#         Global.d += 1
+
+      # make associated images appear until num = 7, use rand
+      # allow observed to grab and move them
+          
 def display():
    
+   for i in a:
+      try:
+         if i.expired(): 
+            a.remove(i)
+#            print 'expired'
+      except: pass
+      
    for i in a:
       # transform the drawing frame to put the items 
       #     where they should be
@@ -65,9 +98,34 @@ def display():
       #remove drawing frame transformations
       popMatrix()
       
-      try:
-         if i.expired(): 
-            a.remove(i)
-#            print 'expired'
-      except: pass
+def button_press(pos, button):    # vroom callback
+   print 'button_press: pos={}'.format(pos)
+   if Global.dream_scene == 1:
+      # need to add checking that at least one emblem has been made
+      #     ACTUALLY - only get an error to the screen if do it too soon
+      scene_transition1()
+      Global.dream_scene = 2
+      print 'dream scene',Global.dream_scene
+   else:
+      print 'button does nothing yet'
+
+def button_release(pos,button):
+   pass
+   
+def motion(pos, button):
+   pass
+   
+###### Functions ######
+
+def scene_transition1():
+
+   # Make most recent emblem move downward
+   a[0].z_step = -a[0].z_step
+   
+   # make image on floor to represent the relevant dream
+   points = [[-5.,-5., 0.01],[5., -5., 0.01],[-5., 5., 0.01],[5.,5.,0.01]]
+   a.append(Floor(points,get_dream(-1)))
+   a[-1].color = [1.,1.,1.,0.]
+   
+         #initiate associated dream images - put in main frame loop?
 

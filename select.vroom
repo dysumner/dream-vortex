@@ -63,6 +63,8 @@ def button_press(pos, button):
       if hit(Global.emblem[i],pos):
          print '!!!!! HIT !!!!!'
          Global.dragging[i] = True
+         # this break keeps you from moving both but can't choose which to move yet
+         break
     
 def button_release(pos, button):
    print 'button_release: pos={}'.format(pos)
@@ -75,5 +77,6 @@ def motion(pos, button):
       if Global.dragging[i]:
         Global.emblem[i] = pos
       else:
-         Global.hover[i] = hit(Global.emblem[i], pos) 
+         Global.hover[i] = hit(Global.emblem[i], pos)
+          
 

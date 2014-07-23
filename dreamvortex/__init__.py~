@@ -25,7 +25,6 @@ def init_emblem_data():
 def get_emblem_data():
    return Settings('emblems.yaml')
 
-
 ###### Load Textures for Items ######
 import os
 
@@ -37,9 +36,12 @@ dreams = None
 def load_dreams():
    global dreams
    dreams = [Texture.from_file(get_resource(img)) for img in dream_images]
+   return len(dreams)
 
-def get_dream():
-   return dreams[randint(0, len(dreams)-1)]
+def get_dream(i = None):  # 
+   if i == None: i = randint(0, len(dreams)-1)
+   print 'i',i
+   return dreams[i]
    
 # for dream strips
 strip_images = [os.path.join('strips', img) for img in os.listdir('data/strips')]

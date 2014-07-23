@@ -24,4 +24,7 @@ def transform(item):
 #         pass
          print 'except', trans[i],i
    
-
+def distance(obj1,obj2):
+   dist = ((obj1[0]-obj2[0])**2 + (obj1[0]-obj2[0])**2 + 
+            (obj1[0]-obj2[0])**2)**0.5 
+   return dist

@@ -24,24 +24,4 @@ def transform(item):
 #         pass
          print 'except', trans[i],i
    
-##### Copied from vroom's transform.py since it didn't seem to work there #####
-def move_to(self, position):
-
-   dx = position[0] - self.origin[0]
-   dy = position[1] - self.origin[1]
-   dz = position[2] - self.origin[2]
-
-   self.origin = position
-
-   if not hasattr(self, 'region'):
-      return
-
-   self.region.bounds['x'].min += dx 
-   self.region.bounds['x'].max += dx 
-
-   self.region.bounds['y'].min += dy 
-   self.region.bounds['y'].max += dy 
-
-   self.region.bounds['z'].min += dz 
-   self.region.bounds['z'].max += dz 
 

@@ -47,7 +47,6 @@ class Vortex:
       x = radius * cos(self.theta)
       y = radius * sin(self.theta)
       
-      print 'in Vortex.step', self.pos[2]
       z = self.pos[2] + self.z_step
       self.pos = [x,y,z]
       return self.pos
@@ -129,6 +128,8 @@ class Vortex:
       # randomize start point
       for _ in range(randint(100, 450)):
          vortex.step()
+         # move the image back down to the floor
+         vortex.pos[2] = vortex.pos[2] - vortex.z_step
 
       steps = 6      # originally 6
       d_theta = steps*vortex.theta_step

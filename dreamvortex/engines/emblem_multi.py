@@ -37,6 +37,8 @@ class Emblem(BaseItem):
       self.style = 'solid'
       self.transforms = [0.,0.,-1.,0.,0.,0.,
             emblem_data[('scale'+str(emb))]]
+            
+      self.z_step = 0.02    # define rate of rise
       
 #      print 'origin', self.origin
 
@@ -49,8 +51,8 @@ class Emblem(BaseItem):
       lighting(False)      # to retain previous lighing setting
 
    def step(self): 
-      self.transforms[2] += 0.02      # z transform
-      self.transforms[5] += .5         # rotation around z-axis
+      self.transforms[2] += self.z_step # z transform
+      self.transforms[5] += 0.5         # rotation around z-axis
       self.age += 1
       
       

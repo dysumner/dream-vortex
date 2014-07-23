@@ -1,4 +1,4 @@
-class BaseParticle:
+class BaseItem:
 
    def __init__(self, lifetime, vortex):
       self.lifetime = lifetime
@@ -7,7 +7,15 @@ class BaseParticle:
       self.age = 0
 
    def expired(self):
-      return self.age > self.lifetime
+      try:
+         if self.transforms[2] < -2.:
+            exp = True
+      except: 
+         if self.age > self.lifetime:
+            exp = True
+         else: exp = False
+      
+      return exp
 
    def step(self):
       raise NotImplementedError()

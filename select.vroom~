@@ -4,9 +4,8 @@
 Dawn Sumner, Djerassi, July 2014
 Working to be able to select an object and do something with it.  
 Based heavily on drag.vroom.
-
-need to make the defs from drag responsive to the different objects - need a wrapping structure to do so...
 '''
+
 from vroom import *
 import vroom.extra.PLY
 from math import sqrt
@@ -16,13 +15,6 @@ from math import sqrt
 def hit(pos_obj, cursor):
    dist = sum([(a-b)*(a-b) for a,b in zip(pos_obj, cursor)])
    return sqrt(dist) < Global.size
-   
-def button0(pos):
-   print 'button 0'
-   
-def button1(pos):
-   print 'button 1'
-      
 
 # vroom callbacks
 
@@ -71,6 +63,7 @@ def button_press(pos, button):
       if hit(Global.emblem[i],pos):
          print '!!!!! HIT !!!!!'
          Global.dragging[i] = True
+         break
     
 def button_release(pos, button):
    print 'button_release: pos={}'.format(pos)
@@ -83,5 +76,6 @@ def motion(pos, button):
       if Global.dragging[i]:
         Global.emblem[i] = pos
       else:
-         Global.hover[i] = hit(Global.emblem[i], pos) 
+         Global.hover[i] = hit(Global.emblem[i], pos)
+          
 
