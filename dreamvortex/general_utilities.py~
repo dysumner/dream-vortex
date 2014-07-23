@@ -1,0 +1,47 @@
+'''
+Generally useful functions for vroom programs
+Dawn Sumner, Djerassi, July 2014
+'''
+
+from vroom import *
+
+###### Transform Drawing Location ######
+def transform(item):
+   '''Performs the OpenGL transformations to place objects 
+   in the correct locations for Vroom
+   '''
+   #probably better to implement as a dictionary with names for the transforms so that some can be left out without shifting all the other values - see vroom implementation of translate and rotate - they aren't what's written in documentation exactly
+   
+   # list of transformations to apply
+   trans=[translateX,translateY,translateZ,
+         rotateX, rotateY, rotateZ, scale]
+   
+   #try each one
+   for i in range(len(trans)):
+      try:
+         trans[i](item.transforms[i])        
+      except:
+#         pass
+         print 'except', trans[i],i
+   
+##### Copied from vroom's transform.py since it didn't seem to work there #####
+def move_to(self, position):
+
+   dx = position[0] - self.origin[0]
+   dy = position[1] - self.origin[1]
+   dz = position[2] - self.origin[2]
+
+   self.origin = position
+
+   if not hasattr(self, 'region'):
+      return
+
+   self.region.bounds['x'].min += dx 
+   self.region.bounds['x'].max += dx 
+
+   self.region.bounds['y'].min += dy 
+   self.region.bounds['y'].max += dy 
+
+   self.region.bounds['z'].min += dz 
+   self.region.bounds['z'].max += dz 
+

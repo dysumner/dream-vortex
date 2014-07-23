@@ -1,0 +1,73 @@
+#!/usr/bin/env vroom-wrapper
+
+from vroom import *
+from dreamvortex.general_utilities import transform
+
+from dreamvortex.environment_obj import Floor
+from dreamvortex.engines.obj import Obj
+from dreamvortex.engines.particle_single import Particle
+from dreamvortex.engines.strip_single import Strip
+from dreamvortex.engines.emblem_multi import Emblem
+
+from dreamvortex import settings, load_strips, load_emblems
+
+# for sound
+from dreamvortex.WavPlay import InitWavPlay
+
+a = []      # the list of objects to draw
+   
+def init():
+
+   # make environment objects
+   a.append(Floor())
+   
+   # initialize sound files
+   InitWavPlay(50)
+      
+def gl_init():
+
+   load_strips()  # to put dreams on strips
+   load_emblems() # to get the meshes  # not used yet
+   Global.filename = [get_resource('emblems/shoe.ply'),
+         get_resource('emblems/sphere.ply')]
+      
+   # assign a texture to the floor - must be w/in gl_init
+   a[0].texture = Texture.from_file(get_resource( \
+         'floors/DV_Source3_Darker_Blur.png'))
+       
+def frame():
+
+   for item in a:
+      item.step()
+      
+   # Add new items if needed
+   if random() < 0.05:
+      a.append(Particle())
+      
+   if random() < 0.05:
+      a.append(Strip())
+      
+   if random() < 0.001:
+      a.insert(0,Emblem())    # put non-transparent obj first
+#      a[0].mesh.enable_tracking()
+       
+def display():
+   
+   for i in a:
+      # transform the drawing frame to put the items 
+      #     where they should be
+      pushMatrix()
+      translateZ(-3)
+      scale(0.15)
+      transform(i)      # function in general_utilities.py
+      i.draw()          # should have all lighting, color, etc info
+      
+      #remove drawing frame transformations
+      popMatrix()
+      
+      try:
+         if i.expired(): 
+            a.remove(i)
+#            print 'expired'
+      except: pass
+

@@ -13,7 +13,7 @@ class Vortex:
        position (angle and position).
    '''
 
-   @staticmethod
+   @staticmethod     # a function that doesn't use 'self' within a class
    def radius(a, b, theta):
       ''' Compute radius for given angle and spiral parameter values.'''
       return a + b * theta
@@ -46,6 +46,7 @@ class Vortex:
       # Update position and return value
       x = radius * cos(self.theta)
       y = radius * sin(self.theta)
+      
       z = self.pos[2] + self.z_step
       self.pos = [x,y,z]
       return self.pos
@@ -128,7 +129,7 @@ class Vortex:
       for _ in range(randint(100, 450)):
          vortex.step()
 
-      steps = 6
+      steps = 6      # originally 6
       d_theta = steps*vortex.theta_step
 
       r1 = Vortex.radius(vortex.a, vortex.b, vortex.theta)

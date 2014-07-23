@@ -1,0 +1,21 @@
+# emblem data file
+
+# number of emblems described
+number: 2
+
+'1': 'shoe.ply'
+color1: [1.0,0.,0.]
+center1: [-0.17,-0.47,-0.67]  # offset of center from origin
+scale1: 5.
+lifetime1:
+   min: 4000
+   max: 6000
+   
+'2': 'sphere.ply'
+color2: [1.,1.,0.]
+center2: [100.,0.,0.]
+scale2: 0.01
+lifetime2:
+   min: 4000
+   max: 6000
+

@@ -1,0 +1,56 @@
+#!/usr/bin/env vroom-wrapper
+
+from vroom import *
+import vroom.extra.PLY
+from dreamvortex.environment import *
+
+def init():
+   filename = get_resource('emblems/sphere.ply')
+
+   #originally False; True gives reflections
+   Global.mesh = Mesh.from_ply(filename, True)  
+
+   Global.lighting = BooleanOption()
+   Global.lighting = True
+
+   addMainMenuItem('lighting', lambda x: Global.lighting.toggle(), type='toggle')
+   addMainMenuItem('debug', lambda x: tracker_debug(x.getToggle()), type='toggle')
+   
+   Global.z = 0.
+   Global.theta = 0.
+   
+#   Global.mesh.move_to([-.17,-.47,-.67])
+   
+   print 'origin', Global.mesh.origin
+
+def gl_init():
+   Global.mesh.enable_tracking()
+
+def frame(): 
+#   pass
+   step(Global.mesh)
+   
+def display():
+   lighting(Global.lighting)
+
+   color(white)
+   pushMatrix()
+   translate([0.,0.,Global.z])
+   
+   draw_grid()
+   popMatrix()
+   
+   material(blue) if Global.lighting else color(red)
+   style = 'solid' if Global.lighting else 'wireframe'
+
+   pushMatrix()
+   rotateZ(Global.theta)
+#   translate([-.17,-.47,Global.z-.67])
+#   scale(0.001)
+   Global.mesh.draw(style=style)
+   
+   popMatrix()
+   
+def step(mesh): pass
+#   Global.z += 0.005
+#   Global.theta += .5

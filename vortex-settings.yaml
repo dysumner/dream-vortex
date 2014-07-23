@@ -20,11 +20,6 @@ b:
 delta-theta: 0.1     #originally 0.1
 delta-z: 0.2         #originally 0.2
 
-# vortex-lines settings
-#
-
-count: 12
-
 # vortex-particles settings
 #
 
@@ -43,7 +38,7 @@ particle-radius:
 particle-color-range:
    min: 0.3
    max: 0.8
-
+   
 particle-red-range:
    min: 0.3
    max: 0.8
@@ -56,7 +51,7 @@ particle-green-range:
    min: 0.
    max: 0.3
 
-particle-transparency: 0.3
+particle-transparency: 0.3 # 0.3 good for vortex
 
 # vortex-strip-static
 #
@@ -68,3 +63,9 @@ static-count: 300
 height:
    min: 0.25
    max: 1.0
+   
+# vortex-lines settings
+#
+
+count: 12
+
