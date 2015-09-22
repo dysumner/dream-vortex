@@ -5,7 +5,7 @@ import vroom.extra.PLY
 from dreamvortex.environment import *
 
 def init():
-   filename = get_resource('emblems/sphere.ply')
+   filename = get_resource('emblems/glasses1.ply')
 
    #originally False; True gives reflections
    Global.mesh = Mesh.from_ply(filename, True)  
@@ -46,7 +46,7 @@ def display():
    pushMatrix()
    rotateZ(Global.theta)
 #   translate([-.17,-.47,Global.z-.67])
-#   scale(0.001)
+   scale(0.005)
    Global.mesh.draw(style=style)
    
    popMatrix()

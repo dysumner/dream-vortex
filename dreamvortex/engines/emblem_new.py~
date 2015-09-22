@@ -7,7 +7,7 @@ from dreamvortex.engines.base_item import BaseItem
 from vroom import *
 import vroom.extra.PLY
 
-from dreamvortex import settings, get_emblem
+from dreamvortex import emblem_data, get_emblem
 
 #from vroom.rendering.buffers import Buffer
 #from vroom.core.color import color
@@ -28,10 +28,14 @@ class Emblem(BaseItem):
       self.color = [1.0, 0.0, 0.0]
       self.material = self.color 
       self.style = 'solid'
-      self.transforms = [0.,0.,-1.,0.,0.,0.,5.]
+      self.transforms = [[0.,0.,-1.],[0.,0.,0.],5.]
       
       self.mesh.move_to([-.17,-.47,-.67])
 #      print 'origin', self.origin
+
+      # Set dragging defaults
+      self.dragging = False
+      self.hover = False
 
    def draw(self):
       lighting(True)
@@ -42,8 +46,8 @@ class Emblem(BaseItem):
       lighting(False)      # to retain previous lighing setting
 
    def step(self): 
-      self.transforms[2] += 0.02      # z transform
-      self.transforms[5] += .5         # rotation around z-axis
+      self.transforms[0][2] += 0.02      # z transform
+      self.transforms[1][2] += .5         # rotation around z-axis
       self.age += 1
       
       

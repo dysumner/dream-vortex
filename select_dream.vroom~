@@ -1,0 +1,127 @@
+#!/usr/bin/env vroom-wrapper
+
+'''
+Dawn Sumner, Djerassi, July 2014
+Working to be able to select an object and do something with it.  
+Based heavily on drag.vroom.
+'''
+
+from vroom import *
+import vroom.extra.PLY
+
+from dreamvortex import settings, load_dreams, get_dream
+from dreamvortex.general_utilities import transform
+
+# import object types
+from dreamvortex.environment_obj import Floor
+from dreamvortex.engines.dream_single import DreamImage
+
+from random import uniform, randint
+from math import sqrt
+
+a = []      # the list of objects to draw
+
+Global.hit_distance = 10.
+
+# vroom callbacks
+
+def gl_init():
+
+   Global.num_dreams = load_dreams()  # for scene 2
+      
+   # make environment objects
+   tex = Texture.from_file(get_resource('floors/DV_Source3_Darker_Blur.png'))
+   corners = [[-50.,-50., 0.],[50., -50., 0.],[-50., 50., 0.],[50.,50.,0.]]
+   a.append(Floor(corners, tex))
+      
+def frame(): 
+
+   for item in a:
+      item.step()
+         
+   if len(a) < 2:
+      num = randint(0, Global.num_dreams-1)
+      a.append(DreamImage(num))
+
+def display():
+
+   for i in a:
+      try:
+         if i.expired(): 
+            a.remove(i)
+      except: pass
+      
+   for i in a:
+      # transform the drawing frame to put the items 
+      #     where they should be
+      pushMatrix()
+#      translateZ(-3)
+#      scale(0.15)
+#      transform(i)      # function in general_utilities.py
+      i.draw()          # should have all lighting, color, etc info
+      
+      #remove drawing frame transformations
+      popMatrix()
+
+   # visual signal that you're dragging one - need to change this for dreams
+#   for i in range(Global.num):
+#      if a[i].dragging:
+#         color(red)
+#      elif a[i].hover:
+#         color(green)
+#      else:
+#         color(blue)
+   
+def button_press(pos, button):      
+   print 'button_press: pos={}'.format(pos)
+   global a
+
+   for i in range(1,len(a)):  
+#      if hit([n+m for n,m in zip(a[i].transforms[0], a[i].pos)],pos):
+      if hit(a[i].pos,pos):   
+         # The floor and image on the floor should not have dragging options
+         try:
+            a[i].dragging = True
+            print '!!!!! HIT !!!!!',a[i].dragging, i
+            # stops moving more than one but can't choose which to move yet
+            break
+         except: 
+            print 'hit, but not draggable'
+            pass
+   print a[-1].dragging, 'again; transforms:', a[-1].transforms
+    
+def button_release(pos, button):
+   global a
+   print 'button_release: pos={}'.format(pos)
+
+   for i in range(len(a)): 
+      try:
+         a[i].dragging = False
+      except: pass
+   
+def motion(pos, button):
+   global a
+
+   for i in range(1,len(a)):  
+#      print i
+      try:
+         if a[i].dragging:
+            # vector distance from transform point to pos
+#            obj_pos = [n+m for n,m in zip(i.transforms[0], i.pos)]
+#            v_dist = [n-m for n,m in zip(obj_pos, pos)]
+#            i.transforms[0] = [n+m for n,m in zip(v_dist, i.transforms[0])]
+#            print i.transform[0]
+            i.dream.move_to(pos)
+#         else:
+#            i.hover = hit(i.pos, pos)
+      except: 
+         print 'in except for obj', i
+#         pass
+          
+# Functions
+
+def hit(pos_obj, cursor):
+   dist = sum([(a-b)*(a-b) for a,b in zip(pos_obj, cursor)])
+   return sqrt(dist) < Global.hit_distance
+
+

@@ -1,10 +1,10 @@
 # emblem data file
 
 # number of emblems described
-number: 2
+number: 4
 
 '1': 'shoe.ply'
-dream-image-name1: 'data/dreams/Monster_Stomping_My_Husband.jpg'
+dream-image-num1: 17
 color1: [1.0,0.,0.]
 center1: [-0.17,-0.47,-0.67]  # offset of center from origin
 scale1: 5.
@@ -13,7 +13,7 @@ lifetime1:
    max: 6000
    
 '2': 'sphere.ply'
-dream-image-name2: 'data/dreams/Daisies_Github.png'
+dream-image-num2: 2
 color2: [1.,1.,0.]
 center2: [100.,0.,0.]      # need offset to see spiral
 scale2: 0.01               # offset so large because scaled so sm
@@ -21,3 +21,20 @@ lifetime2:
    min: 4000
    max: 6000
 
+'3': 'glasses1.ply'
+dream-image-num3: 9
+color3: [0.8,0.8,0.8]
+center3: [0.,0.,0.]      # need offset to see spiral
+scale3: .05
+lifetime3:
+   min: 4000
+   max: 6000
+   
+'4': 'c1.ply'
+dream-image-num4: 12
+color4: [1.,0.25,0.0]
+center4: [0.,25.,0.]      # need offset to see spiral
+scale4: .2
+lifetime4:
+   min: 4000
+   max: 6000

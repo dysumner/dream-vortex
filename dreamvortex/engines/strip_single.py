@@ -1,6 +1,6 @@
 from dreamvortex.engines.base_item import BaseItem
 from dreamvortex.vortex import Vortex
-from dreamvortex import settings, get_strip
+from dreamvortex import settings, get_strip, get_dancer
 
 from vroom.rendering.buffers import Buffer
 from vroom.core.color import color
@@ -13,7 +13,7 @@ class Strip(BaseItem):
    
    def __init__(self):
       
-      lifetime = randint(400, 500)
+      lifetime = randint(300, 400)
       vortex = Vortex.random_vortex()
       
       BaseItem.__init__(self, lifetime, vortex)
@@ -27,11 +27,17 @@ class Strip(BaseItem):
       c = uniform(0.0005, 0.8)   # 0.0001 to 0.8 for vortex
       self.color = [c, c, c, 1.0]   # gives the strips various intensities
             
-      # Initializes the texture
-      self.texture = get_strip()
-
+      # Initializes the texture (for donna's as well)
+      try:
+         self.texture = get_strip()
+      except:
+         self.texture = get_dancer()
+         
       self.initialize()
       self.step()     # This step() results in self.buffer() being defined
+      
+      self.transforms = [[0.,0.,0.],[0.,0.,0.],1.]
+      self.pos = [0.,0.,0.]
 
    def initialize(self):
 

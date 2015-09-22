@@ -1,4 +1,4 @@
-from dreamvortex.engines.engine import BaseItem, BaseEngine
+from dreamvortex.engines.base_item import BaseItem
 from dreamvortex.vortex import Vortex
 from dreamvortex.WavPlay import RandPlay
 from dreamvortex import settings
@@ -8,7 +8,7 @@ from vroom.rendering.point_cloud import PointCloud
 from random import randint, uniform
 
 
-class Particle(BaseItem,BaseEngine):
+class Particle(BaseItem):
    
    def __init__(self):
       
@@ -16,7 +16,6 @@ class Particle(BaseItem,BaseEngine):
       vortex = Vortex.random_vortex()
       
       BaseItem.__init__(self, lifetime, vortex)
-      BaseEngine.__init__(self)
       
       c = [settings.get_uniform('particle-red-range'), \
          settings.get_uniform('particle-green-range'), \
@@ -25,7 +24,8 @@ class Particle(BaseItem,BaseEngine):
       self.color = c
       
       # set transform for z to be 1 above floor
-      self.transforms = [0.,0.,1.,0.,0.,0.,1.0]
+      self.transforms = [[0.,0.,1.],[0.,0.,0.],1.]
+      self.pos = [0.,0.,0.]
       
       RandPlay()
 

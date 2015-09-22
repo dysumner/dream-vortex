@@ -51,7 +51,7 @@ particle-green-range:
    min: 0.
    max: 0.3
 
-particle-transparency: 0.8 # 0.3 good for vortex
+particle-transparency: 0.3 # 0.3 good for vortex
 
 # vortex-strip-static
 #

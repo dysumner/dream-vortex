@@ -1,0 +1,269 @@
+#!/usr/bin/env vroom-wrapper
+
+'''
+Dawn Sumner, June 2015
+For Glasgow Exhibition film - non-random, scene 2 fixed with moving dreams
+
+Using scheduler in a separate threat to time events. 
+	NOTE: not robust, there is no error checking for sending items to VRUI before they are completed
+
+Functions for scheduled events:
+	add_emblem(emblem #)
+	add_dream(dream #, destination as [[x,y,z],[xrot,yrot,zrot],size], lifetime)
+	scene2
+	move_dream(item # in a, destination as [[x,y,z],[xrot,yrot,zrot],size])
+	remove_dream(item # in a)
+	
+Added (partially) drawing dreams from back to front in scene 2 w/o access to VROOM
+Added (partially) global downward transform so that we do not have to adjust the scene for filming
+'''
+
+from vroom import *
+
+from dreamvortex import settings, emblem_data, load_dreams, load_strips, load_emblems, get_dream
+from dreamvortex.general_utilities2 import transform, distance, invert
+
+# import object types
+from dreamvortex.environment_obj import Floor
+from dreamvortex.engines.particle_single import Particle
+from dreamvortex.engines.strip_single import Strip
+from dreamvortex.engines.emblem_multi import Emblem
+from dreamvortex.engines.dream_single import DreamImage
+
+# for sound
+from dreamvortex.WavPlay import InitWavPlay
+
+from random import uniform, randint, seed
+from math import sqrt
+from time import time, sleep
+
+# for controled dreams with timed events in a separate thread
+from sched import scheduler
+from threading import Thread
+
+a = []      # the list of objects to draw
+f = []      # environment objects like the floor that don't move
+
+Global.control_dreams = True   # to transform the dreams in scene 2 for Glasgow video
+
+Global.c = -1       # counter for length of scene 2 if Global.control_dreams = False
+                    # used to schedule events if -1
+
+Global.dream_scene = 1     # set to 1 for vortex, 2 for only scene 2
+
+ztran = -5.   # global downward transform 
+
+###### Vroom Callbacks ######
+
+def init():
+
+   # initialize sound files
+   InitWavPlay(50)
+   
+def gl_init():
+
+   load_strips()  # to put dreams on strips
+   load_emblems() # to get the meshes  # not used yet - just says pass
+   load_dreams()  # for scene 2
+   
+   Global.filename = [get_resource('emblems/shoe.ply'),
+         get_resource('emblems/sphere.ply'),
+         get_resource('emblems/glasses1.ply'),
+         get_resource('emblems/c1.ply'),]
+         
+   # make environment objects
+   tex = Texture.from_file(get_resource('floors/DV_Source3_Darker_Blur.png'))
+   corners = [[-50.,-50., 0.],[50., -50., 0.],[-50., 50., 0.],[50.,50.,0.]]
+   f.append(Floor(corners, tex))
+   
+   if Global.dream_scene == 2:
+      # make image on floor to represent a dream
+      points = [[-5.,-5., 0.5],[5., -5., 0.5],[-5., 5., 0.5],[5.,5.,0.5]]
+      f.append(Floor(points,get_dream(0)))
+      f[-1].color = [1.,1.,1.,0.]
+         
+def frame():
+   
+   if Global.control_dreams == True and Global.c == -1:
+      # seed the random number generator for all functions called
+      seed(0)
+   
+      # create events
+      events = scheduler(time,sleep)
+      events.enter(5, 1, add_emblem, (1,))
+      events.enter(10, 1, add_emblem, (3,))
+      events.enter(20, 1, add_emblem, (2,))
+      events.enter(24, 1, scene2, ())
+      events.enter(30, 1, add_dream, (3, [[1.,2.,5.],[0.,0.,30.],2.], 5000))
+      events.enter(35, 1, add_dream, (6, [[1.,2.,15.],[0.,0.,60.],2.], 5000))
+      events.enter(45, 1, move_dream, (-1, [[0.,0.,15.],[0.,0.,0.],1.]))
+      events.enter(50, 1, remove_dream, (-2,))
+      t = Thread(target=events.run)
+      t.start()
+      
+      Global.c = 0
+
+   for item in f:
+      item.step()
+         
+   for item in a:
+      item.step()
+         
+   if Global.dream_scene == 1:
+      # Add new items
+      if random() < 0.05:
+         a.append(Particle())
+         
+      if random() < 0.07:
+         a.append(Strip())
+         
+#      if random() < 0.001:
+#         a.insert(0,Emblem())    # put non-transparent obj first
+#         a[0].mesh.enable_tracking()
+
+                  
+   elif Global.dream_scene == 2: 
+      if len(a) < 5 and Global.control_dreams == False:
+         a.append(DreamImage())
+      
+      if Global.control_dreams == True:
+         pass  # dream creation is controlled by scheduler            
+            
+     
+      # transition back to scene 1
+#      global c
+#      c += 1
+#      if c > 5000: 
+#         Global.dream_scene = 1
+#         f.pop(-1)
+#         print 'dream scene =', Global.dream_scene
+      
+def display():
+   
+   # Remove old objects
+   for item in a:
+      try:
+         if item.expired(): 
+            a.remove(item)
+      except: pass
+      
+   # Draw environment objects
+   # perform a global z transformation
+   pushMatrix()
+   transform([0.,0.,ztran],[0.,0.,0.],1.])
+   
+   for item in f:
+      item.draw()
+      
+   # Sort objects to draw from back to front using .ndist
+   # STRIPS DON'T HAVE .ndist yet, so leave the sorting out of scene 1
+   ### Want sorting along the y axis for Glasgow, since won't move scene
+   ### don't remember how ndist is calculated, e.g. relative to what...
+   if Global.dream_scene == 2:
+#      a.sort(key=lambda x: x.ndist, reverse = True)
+      a.sort(key=lambda x: x.transforms[0][1], reverse = True)
+
+   for item in a:
+      # transform the drawing frame to put the items 
+      #     where they should be 
+      #     --> could move this to individual .draw() calls
+      pushMatrix()
+      transform(item.transforms)
+      translate(invert(item.pos))
+      item.draw()          # should have all lighting, color, etc info
+      
+      #remove drawing frame transformations
+      popMatrix()
+      
+   popMatrix()		# End global z transformation
+   
+def button_press(pos, button):    # vroom callback
+   print 'button_press: pos={}'.format(pos)
+   global a,c
+   
+                  
+   # always look for moving dreams
+   for i in range(len(a)):  
+         # if there are no transformations of the environment, 
+         #     a[i].transforms[0] represents the location of the 
+         #     center of the object <obj>.pos IS THE CENTER 
+         
+      if Global.dream_scene == 1:
+         if a[i].type == 'emblem' and hit(a[i].transforms[0],pos):
+            Global.dream_scene = 2
+            Global.t20 = time()
+            Global.c = 0
+            # Make the emblem move downward
+            a[i].z_step = -a[i].z_step
+      
+            # make image on floor to represent a dream
+            points = [[-5.,-5., 0.5],[5., -5., 0.5],
+                     [-5., 5., 0.5],[5.,5.,0.5]]
+            d_i = emblem_data[('dream-image-num'+str(a[i].emb))]
+            f.append(Floor(points,get_dream(d_i)))
+            f[-1].color = [1.,1.,1.,0.]
+            print '!!!!!',d_i,' Emblem Hit !!!!!'
+            
+      # item.moveable = False by default
+      if a[i].moveable and hit(a[i].transforms[0],pos):
+         print '!!!!! HIT !!!!!'
+         a[i].dragging = True
+         # break stops moving more than one
+         break
+
+def button_release(pos,button):
+   global a
+   print 'button_release: pos={}'.format(pos)
+
+   # reset dragging flag
+   for i in range(len(a)): 
+      if a[i].moveable and a[i].dragging: 
+         a[i].dragging = False
+   
+def motion(pos, button):
+   global a
+
+   for i in range(len(a)):  
+      if a[i].moveable and a[i].dragging:
+         # reasign the center position by changing a[i].transforms,
+         #     keep dream above the floor
+         a[i].transforms[0] = pos
+         if a[i].transforms[0][2] < a[i].height/2.:
+            a[i].transforms[0][2] = a[i].height/2.
+            
+         # set the navigational distance for sorting
+#         a[i].ndist = distance(a[i].transforms[0],[0.,-1110.,0.])
+   
+###### Functions ######
+
+def hit(pos_obj, cursor):
+   dist = sum([(a-b)*(a-b) for a,b in zip(pos_obj, cursor)])
+   return sqrt(dist) < settings['select-distance']
+   
+def add_emblem(n=1):
+   a.insert(0,Emblem(n))    # put non-transparent obj first
+
+def add_dream(n=1, dest=None, lifetime=10000):
+   a.append(DreamImage(n, lifetime))
+   if dest <> None:
+      a[-1].destination = dest
+
+def scene2():
+   Global.dream_scene = 2
+   print "Scene 2 starting"
+   
+   # make image on floor to represent a dream
+   points = [[-5.,-5., 0.5],[5., -5., 0.5],
+                     [-5., 5., 0.5],[5.,5.,0.5]]
+   f.append(Floor(points,get_dream(0)))
+   f[-1].color = [1.,1.,1.,0.]
+   
+   #make lowest emblem decend
+   a[0].z_step = -a[0].z_step
+   
+def move_dream(n=-1, dest=None):
+   if dest <> None:
+      a[n].destination = dest
+
+def remove_dream(n=-1):
+   a[n].age = a[n].lifetime - 200

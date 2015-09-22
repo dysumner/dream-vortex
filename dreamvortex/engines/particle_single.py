@@ -12,7 +12,7 @@ class Particle(BaseItem):
    
    def __init__(self):
       
-      lifetime = randint(400, 600)  # 400, 600
+      lifetime = randint(300, 500)  # 400, 600
       vortex = Vortex.random_vortex()
       
       BaseItem.__init__(self, lifetime, vortex)
@@ -24,7 +24,8 @@ class Particle(BaseItem):
       self.color = c
       
       # set transform for z to be 1 above floor
-      self.transforms[2] = 1.
+      self.transforms = [[0.,0.,1.],[0.,0.,0.],1.]
+      self.pos = [0.,0.,0.]
       
       RandPlay()
 

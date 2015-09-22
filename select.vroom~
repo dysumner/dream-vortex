@@ -63,6 +63,7 @@ def button_press(pos, button):
       if hit(Global.emblem[i],pos):
          print '!!!!! HIT !!!!!'
          Global.dragging[i] = True
+         # this break keeps you from moving both but can't choose which to move yet
          break
     
 def button_release(pos, button):

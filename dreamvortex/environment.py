@@ -19,9 +19,9 @@ def draw_floor(texture):
    floor.draw(style='solid')
    texture.unbind()
 
-def draw_grid():
+def draw_grid(loc = [-20.,-20.,0.]):
    # a grid
    color(0.3) 
-   draw(grid, 40, 40, 20, 20).at([-20, -20, 0])
+   draw(grid, 40, 40, 20, 20).at(loc)
 
 

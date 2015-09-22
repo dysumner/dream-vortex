@@ -1,0 +1,32 @@
+
+To start the vortex:
+cd ~/Desktop/dream-vortex
+./dream-scenes2e.vroom
+
+Assign all buttons:
+   right, white button to 6 DOF Input Device
+   right, upper trigger button to Gui Interaction so you can get rid of accidental dialogs
+   all others, including joy sticks: "Do Nothing"
+   There should be no main menu assignment, and there is no way to kill assignments
+   
+If the program doesn't start and you get only a few lines on the monitor, the vr-device-daemon may need to be restarted:
+   sudo service vr-dev<tab> restart
+      madeindavis
+You can check to see if the vr-device-daemon is running by typing:
+   sudo service vr-dev<tab> status
+
+If the TV isn't getting a signal:
+   sudo service 3d<tab> restart
+or
+   sudo service 3d<tab> stop
+   sudo service 3d<tab> start
+(sometimes the restart tries to start it again too quickly, I think)
+
+Use the settings to change the volume of the chimes
+Change the volume on my ipod for the background noise - it's on the floor under the table
+   Speakers have to be on, and I don't know that they'll last the whole time
+   
+Glasses with the red tape on them cut out frequently.
+Batteries for the glasses are behind the monitor.
+
+

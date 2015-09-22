@@ -1,0 +1,131 @@
+#!/usr/bin/env vroom-wrapper
+
+from vroom import *
+
+from dreamvortex import settings, load_dancers, load_emblems
+from dreamvortex.general_utilities import transform
+
+# import object types
+from dreamvortex.environment_obj import Floor
+from dreamvortex.engines.particle_single import Particle
+from dreamvortex.engines.strip_single import Strip
+from dreamvortex.engines.emblem_multi import Emblem
+#from dreamvortex.engines.dream_single import DreamImage
+
+# for sound
+from dreamvortex.WavPlay import InitWavPlay
+
+from random import uniform, randint
+
+a = []      # the list of objects to draw
+
+Global.dream_scene = 1
+Global.d = 0            # number of dreams in scene 2
+   
+###### Vroom Callbacks ######
+
+def init():
+
+   # initialize sound files
+   InitWavPlay(50)
+   
+      
+def gl_init():
+
+#   Global.num_dreams = load_dreams()  # for scene 2
+   print 'in gl_init()'
+   load_dancers()  # to put dreams on strips
+   load_emblems() # to get the meshes  
+   
+   Global.filename = [get_resource('emblems/shoe.ply'),
+         get_resource('emblems/sphere.ply')]
+   
+      
+   # make environment objects
+   tex = Texture.from_file(get_resource('dancers/cass.jpg'))
+   corners = [[-30.,-30., 0.],[70., -30., 0.],[-30., 70., 0.],[70.,70.,0.]]
+   a.append(Floor(corners, tex))
+   
+def frame():
+
+   for item in a:
+      item.step()
+         
+   if Global.dream_scene == 1:
+      # Add new items
+      if random() < 0.05:
+         a.append(Particle())
+         
+      if random() < 0.05:
+         a.append(Strip())
+         
+      if random() < 0.001:
+         a.insert(0,Emblem())    # put non-transparent obj first
+         a[0].mesh.enable_tracking()
+                  
+   elif Global.dream_scene == 2: 
+      Global.dream_scene = 1
+          
+def display():
+   
+   for i in a:
+      try:
+         if i.expired(): 
+            a.remove(i)
+#            print 'expired'
+      except: pass
+      
+   for i in a:
+      # transform the drawing frame to put the items 
+      #     where they should be
+      pushMatrix()
+#      rotateX(45)
+#      rotateY(90)
+#      rotateZ(15)
+#      translateZ(-5)
+      scale(0.15)
+      transform(i)      # function in general_utilities.py
+      i.draw()          # should have all lighting, color, etc info
+      
+      #remove drawing frame transformations
+      popMatrix()
+      
+def button_press(pos, button):    # vroom callback
+   print 'button_press: pos={}'.format(pos)
+   
+   if Global.dream_scene == 1:
+      # need to add checking that at least one emblem has been made
+      #     ACTUALLY - only get an error to the screen if do it too soon
+#      scene_transition1()
+      Global.dream_scene = 2
+      print 'dream scene',Global.dream_scene
+      
+   else:
+      print 'button does nothing yet'
+#      for i in range(len(a)):  
+#         if hit(Global.emblem[i],pos): # fix test
+#            print '!!!!! HIT !!!!!'
+#            Global.dragging[i] = True
+#            # this break mean only move one but can't choose which to move yet
+#            break
+    
+
+def button_release(pos,button):
+   pass
+   
+def motion(pos, button):
+   pass
+   
+###### Functions ######
+
+def scene_transition1():
+
+   # Make most recent emblem move downward
+   a[0].z_step = -a[0].z_step
+   
+   # make image on floor to represent the relevant dream
+   points = [[-5.,-5., 0.01],[5., -5., 0.01],[-5., 5., 0.01],[5.,5.,0.01]]
+   a.append(Floor(points,get_dream(-1)))
+   a[-1].color = [1.,1.,1.,0.]
+   
+

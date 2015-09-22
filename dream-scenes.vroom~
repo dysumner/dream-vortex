@@ -47,7 +47,7 @@ def gl_init():
    print 'num dreams', Global.num_dreams
                   
    # for debugging
-   a.insert(0,Emblem())
+#   a.insert(0,Emblem())
    
    
 def frame():
@@ -69,7 +69,7 @@ def frame():
                   
    elif Global.dream_scene == 2: 
 #      if Global.d < 4 or len(a) < 6:
-      if len(a) < 6:
+      if len(a) < 7:
          num = randint(0, Global.num_dreams-1)
          a.append(DreamImage(num))
 #         Global.d += 1
@@ -91,7 +91,7 @@ def display():
       #     where they should be
       pushMatrix()
       translateZ(-3)
-      scale(0.15)
+#      scale(0.15)
       transform(i)      # function in general_utilities.py
       i.draw()          # should have all lighting, color, etc info
       
@@ -100,14 +100,23 @@ def display():
       
 def button_press(pos, button):    # vroom callback
    print 'button_press: pos={}'.format(pos)
+   
    if Global.dream_scene == 1:
       # need to add checking that at least one emblem has been made
       #     ACTUALLY - only get an error to the screen if do it too soon
       scene_transition1()
       Global.dream_scene = 2
       print 'dream scene',Global.dream_scene
+      
    else:
       print 'button does nothing yet'
+#      for i in range(len(a)):  
+#         if hit(Global.emblem[i],pos): # fix test
+#            print '!!!!! HIT !!!!!'
+#            Global.dragging[i] = True
+#            # this break mean only move one but can't choose which to move yet
+#            break
+    
 
 def button_release(pos,button):
    pass
@@ -127,5 +136,4 @@ def scene_transition1():
    a.append(Floor(points,get_dream(-1)))
    a[-1].color = [1.,1.,1.,0.]
    
-         #initiate associated dream images - put in main frame loop?
 

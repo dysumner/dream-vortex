@@ -79,5 +79,16 @@ def get_emblem():
    pass
    
    
+# for dance strips
+dance_images = [os.path.join('dancers', img) for img in os.listdir('data/dancers')]
+dancers = []
+
+def load_dancers():
+   global dancers
+   dancers = [Texture.from_file(get_resource(img)) for img in dance_images]
+   print dancers
+
+def get_dancer():
+   return dancers[randint(0, len(dancers)-1)]
 
 

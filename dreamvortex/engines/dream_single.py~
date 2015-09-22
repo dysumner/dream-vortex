@@ -5,19 +5,20 @@ Dawn Sumner, Djerassi, July 2014, based on Jordan's dream.py
 from dreamvortex.engines.base_item import BaseItem
 from dreamvortex.vortex import Vortex
 from dreamvortex import settings, get_dream
-from dreamvortex.general_utilities import distance
+from dreamvortex.general_utilities2 import distance, invert
 
 from vroom.rendering.buffers import Buffer
 from vroom import *
 
-from random import random, randint, randrange
+from random import random, randint, randrange, uniform
 
 
 class DreamImage(BaseItem):
    
    def __init__(self,dream_number=None):
    
-      lifetime = 10000
+      lifetime = randint(100, 2500)
+      
       BaseItem.__init__(self, lifetime, None)
 
       points, texcoords = Vortex.dream_image()
@@ -27,31 +28,49 @@ class DreamImage(BaseItem):
       self.dream.renderMode('triangles:strip')
 
       self.texture = get_dream(dream_number)
-      self.color = [1.0, 1.0, 1.0, .0]
+      self.color = [1.0, 1.0, 1.0, 0.0]
       
-      # move the dreams around
-      print points[0]
+      # define pos as the center of the points (origin already at [0,0,0])
+      # NOTE center returns the inverse of the center of the points!!!
+      self.pos = invert(center(points))
+      self.height = points[1][2]-points[0][2]
+#      print 'height =', self.height
       
-      delta_x = 0
-      delta_y = 0
+      # Move the dreams to a good starting place by coding a transformation
+      x = uniform(2., 8.) * randrange(-1,2,2)  # second term returns -1 or 1
+      y = uniform(0.,4.) #randrange(2., 8.) * randrange(-1,2,2)
+      z = uniform(self.height/2.,self.height)
       
-      if distance(points[0],[0,0,0]) < 5.:
-         delta_x = points[0][0]
-         delta_y = points[0][1]
-      
-      delta_z = 8.   
+      self.transforms = [[x,y,z],[0.,0.,0.],1.]
+#      print 'dream.transforms =', self.transforms
 
-      self.transforms = [delta_x,delta_y,delta_z,0.,0.,0.,1.0]
-         
+      # if destination <> transforms, will move
+      self.destination = self.transforms   
+      
+      # Set dragging defaults and make it moveable
+      self.dragging = False
+      self.hover = False
+      self.moveable = True
+      
+      # Set distance from center to compare to the cursor (change to Vrui view)
+      self.ndist = distance(self.transforms[0],[0.,-1110.,0.])
+#      print 'ndist = ', self.ndist
+      
    def step(self):
       
       # The following lines fade in and out the dreams
-      if self.age < 1000 and self.color[3] < 1:
-         self.color[3] += 1.0/1000.0
-#      elif (self.lifetime - self.age) < 150:
-#         self.color[3] -= 1.0/150.0
+      if self.age < 500 and self.color[3] < .3:
+         self.color[3] += 0.3/500.0
+      elif (self.lifetime - self.age) < 200 and self.color[3] > 0:
+         self.color[3] -= 0.3/300.0
          
       self.age += 1
+      
+      # Move the dream towards its destination and scale 10% per step (may need to adjust)
+      for i in range(2):
+         for j in range(3):
+            self.transforms[i][j] = self.transforms[i][j] + 0.01*(self.destination[i][j]-self.transforms[i][j])
+      self.transforms[2] = self.transforms[2] + 0.01*(self.destination[2]-self.transforms[2])
 
    def draw(self):
       transparency(True)

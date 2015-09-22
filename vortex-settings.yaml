@@ -7,6 +7,8 @@ y-offset: 0.
 z-offset: -4.  # for horizontal: 0
 scale: 0.15
 
+select-distance: 2
+
 # General vortex settings
 # 
 

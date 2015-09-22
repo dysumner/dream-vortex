@@ -121,7 +121,34 @@ class Vortex:
 
    @staticmethod
    def image_strip():
-      ''' Called by DreamImage class __init__
+      ''' Called by Jordan's DreamImage class __init__
+      '''
+      vortex = Vortex.random_vortex()
+
+      # randomize start point
+      for _ in range(randint(100, 450)):
+         vortex.step()
+
+      steps = 6      # originally 6
+      d_theta = steps*vortex.theta_step
+
+      r1 = Vortex.radius(vortex.a, vortex.b, vortex.theta)
+      r2 = Vortex.radius(vortex.a, vortex.b, (vortex.theta+d_theta))
+      ravg = (r1 + r2) / 2.0
+
+      s1 = r1 * d_theta
+      s2 = r2 * d_theta
+      savg = ravg * d_theta
+
+      height = savg / 2.0
+
+      points = list(Vortex.image_generator(steps, vortex, height))
+      coords = list(Vortex.texcoord_generator(len(points)))
+      return points, coords 
+      
+   @staticmethod
+   def dream_image():
+      ''' Called by Dawn's DreamImage class __init__
       '''
       vortex = Vortex.random_vortex()
 

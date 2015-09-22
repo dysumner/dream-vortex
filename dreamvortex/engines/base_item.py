@@ -14,15 +14,31 @@ class BaseItem:
       self.lifetime = lifetime
       self.vortex = vortex
       self.age = 0
-      self.transforms = [0.,0.,0.,0.,0.,0.,1.0]
-
+      
+      # position of object center with respect to its own coordinate system 
+      #     prior to object-specific transformations relative to other objects and
+      #     prior to transformations to scale/orient for Vrui navigation environ
+      if self.vortex:                     # True if self.vortex <> None
+         # mutable object assignment, so don't update self.pos
+         self.pos = self.vortex.pos 
+      else:
+         self.pos = None      
+      
+      # transformations to put the object in the correct place relative to other objects
+      #     transforms[0] = x, y, z translations, respectively
+      #     transforms[1] = rotations around x, y, z axes, respectively
+      #     transforms[2] = scale
+      self.transforms = None
+      self.moveable = False      # make the default that the object can not be dragged  
+      self.type = 'base'         # field to record object type    
+      
    def expired(self):
       exp = False
-      try:
-         if self.transforms[2] < -2.:
+      
+      if self.transforms:                 # True if self.transforms <> None
+         if self.transforms[0][2] < -4.:
             exp = True
             print 'too low'
-      except: pass
       
       if self.age > self.lifetime:
          exp = True

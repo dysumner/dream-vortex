@@ -1,0 +1,128 @@
+#!/usr/bin/env vroom-wrapper
+
+'''
+Dawn Sumner, Djerassi, July 2014
+Working to be able to select an object and do something with it.  
+Based heavily on drag.vroom.
+
+# select_dream_simple now uses the information in obj.transformations to move the object to the proper position using the center position BUT VROOM RETURNS THE NEGATIVE OF THE CENTER LOCATION SO THE CODE ASSUMES THE NEGATIVE OF CENTER IS RETURNED.  CHANGE THE OBJECT DEFINITIONs OF POS TO BE THE ACTUAL POSITION, NOT THE NEGATIVE CENTER OF THE OBJECT.  Done for dream_single, Floor; other objects where pos comes from Vortex should be fine BUT CHECK. Thus, I implemented the invert command on the position for the translation after the overall transformation (line 80)
+'''
+
+from vroom import *
+import vroom.extra.PLY
+
+from dreamvortex import settings, load_dreams, get_dream
+from dreamvortex.general_utilities2 import transform, distance, invert
+
+# import object types
+from dreamvortex.environment_obj import Floor
+from dreamvortex.environment import draw_grid
+from dreamvortex.engines.dream_single import DreamImage
+
+from random import uniform, randint
+from math import sqrt
+
+a = []      # the list of objects to draw
+f = []
+
+# vroom callbacks
+
+#def __init__(self):
+   
+def gl_init():
+      
+   load_dreams()  
+      
+   tex = Texture.from_file(get_resource('floors/DV_Source3_Darker_Blur.png'))
+   corners = [[-50.,-50., 0.],[50., -50., 0.],[-50., 50., 0.],[50., 50., 0.]]
+
+#   Global.corners = corners
+   f.append(Floor(corners, tex))   
+   
+   for i in range(5):
+      a.append(DreamImage())
+
+def frame(): pass
+
+#   for item in a:
+#      item.step()
+         
+#   if len(a) < 2:
+#      num = randint(0, Global.num_dreams-1)
+#      a.append(DreamImage(num))
+
+def display():
+   
+   # Remove old objects
+   for i in a:
+      try:
+         if i.expired(): 
+            a.remove(i)
+      except: pass
+
+   # Draw environmental objects (right now, just the floor)
+   f[0].draw()
+      
+   # Sort objects to draw from back to front (assume at origin for now)
+   a.sort(key=lambda x: x.ndist, reverse = True)
+   
+   for i in a:
+      # transform the drawing frame to put the items 
+      #     where they should be
+      pushMatrix()      
+      transform(i.transforms)      # function in general_utilities.py
+      translate(invert(i.pos)) 
+      i.draw()          # should have all lighting, color, etc info
+      
+      
+      
+      #remove drawing frame transformations
+      popMatrix()
+   
+def button_press(pos, button):      
+   print 'button_press: pos={}'.format(pos)
+   global a
+
+   for i in range(len(a)):  
+      # if there are no transformations of the environment, a[i].transforms[0] represents the location of the center of the object <obj>.pos IS THE CENTER 
+      # set items to be self.moveable = False by default
+           
+      if a[i].moveable and hit(a[i].transforms[0],pos):
+         print '!!!!! HIT !!!!!',
+         a[i].dragging = True
+         print a[i].dragging, 'dragging'
+         # break stops moving more than one but can't choose which to move yet
+         break
+    
+def button_release(pos, button):
+   global a
+   print 'button_release: pos={}'.format(pos)
+
+   for i in range(len(a)): 
+      if a[i].moveable and a[i].dragging: 
+         a[i].dragging = False
+         a[i].ndist = distance(a[i].transforms[0],[0.,-1110.,0.])
+#      print a[i].transforms
+         
+def motion(pos, button):
+   global a
+
+   for i in range(len(a)):  
+      if a[i].moveable and a[i].dragging:
+         # reasign the center position by changing a[i].transformations
+         a[i].transforms[0] = pos
+         if a[i].transforms[0][2] < a[i].height/2.:
+            a[i].transforms[0][2] = a[i].height/2.
+            
+         a[i].ndist = distance(a[i].transforms[0],[0.,-1110.,0.])
+         
+         # eventually, keep the same distance from the cursor so the obj doesn't jump
+         
+          
+# Functions
+
+def hit(pos_obj, cursor):
+   dist = sum([(a-b)*(a-b) for a,b in zip(pos_obj, cursor)])
+   return sqrt(dist) < settings['select-distance']
+
+

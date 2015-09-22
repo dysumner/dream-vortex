@@ -1,0 +1,169 @@
+#!/usr/bin/env vroom-wrapper
+
+'''
+Dawn Sumner, Djerassi, July 2014
+A version of the dream vortex with 2 scenes, the first is the vortex and the second allows users to move dreams around.
+
+Second scene notes:
+# select_dream_simple now uses the information in obj.transformations to move the object to the proper position using the center position BUT VROOM RETURNS THE NEGATIVE OF THE CENTER LOCATION SO THE CODE ASSUMES THE NEGATIVE OF CENTER IS RETURNED.  CHANGE THE OBJECT DEFINITIONs OF POS TO BE THE ACTUAL POSITION, NOT THE NEGATIVE CENTER OF THE OBJECT.  Done for dream_single, Floor; other objects where pos comes from Vortex should be fine BUT CHECK. Thus, I implemented the invert command on the position for the translation after the overall transformation (line 80)
+'''
+
+from vroom import *
+
+from dreamvortex import settings, load_dreams, load_strips, load_emblems, get_dream
+from dreamvortex.general_utilities import transform, distance, invert
+
+# import object types
+from dreamvortex.environment_obj import Floor
+from dreamvortex.engines.particle_single import Particle
+from dreamvortex.engines.strip_single import Strip
+from dreamvortex.engines.emblem_multi import Emblem
+from dreamvortex.engines.dream_single import DreamImage
+
+# for sound
+from dreamvortex.WavPlay import InitWavPlay
+
+from random import uniform, randint
+
+a = []      # the list of objects to draw
+f = []      # environment objects like the floor that don't move
+
+Global.dream_scene = 1
+   
+###### Vroom Callbacks ######
+
+def init():
+
+   # initialize sound files
+   InitWavPlay(50)
+   
+      
+def gl_init():
+
+   load_dreams()  # for scene 2
+   load_strips()  # to put dreams on strips
+   load_emblems() # to get the meshes  # not used yet
+   
+   Global.filename = [get_resource('emblems/shoe.ply'),
+         get_resource('emblems/sphere.ply')]
+   
+      
+   # make environment objects
+   tex = Texture.from_file(get_resource('floors/DV_Source3_Darker_Blur.png'))
+   corners = [[-50.,-50., 0.],[50., -50., 0.],[-50., 50., 0.],[50.,50.,0.]]
+   f.append(Floor(corners, tex))
+                  
+   # for debugging
+#   a.insert(0,Emblem())
+   
+   
+def frame():
+
+   for item in a:
+      item.step()
+         
+   if Global.dream_scene == 1:
+      # Add new items
+      if random() < 0.05:
+         a.append(Particle())
+         
+      if random() < 0.05:
+         a.append(Strip())
+         
+      if random() < 0.001:
+         a.insert(0,Emblem())    # put non-transparent obj first
+         a[0].mesh.enable_tracking()
+                  
+   elif Global.dream_scene == 2: 
+      if len(a) < 7:
+         a.append(DreamImage())
+          
+def display():
+   
+   # Remove old objects
+   for item in a:
+      try:
+         if item.expired(): 
+            a.remove(item)
+      except: pass
+      
+   # Draw environment objects
+   for item in f:
+      item.draw()
+      
+   # Sort objects to draw from back to front using .ndist
+   a.sort(key=lambda x: x.ndist, reverse = True)
+
+   for item in a:
+      # transform the drawing frame to put the items 
+      #     where they should be 
+      #     --> could move this to individual .draw() calls
+      pushMatrix()
+      transform(item.transforms)
+      translate(invert(item.pos))
+      item.draw()          # should have all lighting, color, etc info
+      
+      #remove drawing frame transformations
+      popMatrix()
+      
+def button_press(pos, button):    # vroom callback
+   print 'button_press: pos={}'.format(pos)
+   global a
+   
+   if Global.dream_scene == 1:
+      # If any items are moveable, don't change scenes
+      # NEED TO CONNECT THIS TO EMBLEMS!
+      if not any(item.moveable for i in a):
+         scene_transition1()
+         Global.dream_scene = 2
+         print 'dream scene',Global.dream_scene
+      
+   # always look for moving dreams
+   for i in range(len(a)):  
+         # if there are no transformations of the environment, 
+         #     a[i].transforms[0] represents the location of the 
+         #     center of the object <obj>.pos IS THE CENTER 
+         # item.moveable = False by default
+           
+      if a[i].moveable and hit(a[i].transforms[0],pos):
+         print '!!!!! HIT !!!!!',
+         a[i].dragging = True
+         # break stops moving more than one
+         break
+
+def button_release(pos,button):
+   global a
+   print 'button_release: pos={}'.format(pos)
+
+   # reset dragging flag
+   for i in range(len(a)): 
+      if a[i].moveable and a[i].dragging: 
+         a[i].dragging = False
+   
+def motion(pos, button):
+   global a
+
+   for i in range(len(a)):  
+      if a[i].moveable and a[i].dragging:
+         # reasign the center position by changing a[i].transforms,
+         #     keep dream above the floor
+         a[i].transforms[0] = pos
+         if a[i].transforms[0][2] < a[i].height/2.:
+            a[i].transforms[0][2] = a[i].height/2.
+            
+         # set the navigational distance for sorting
+         a[i].ndist = distance(a[i].transforms[0],[0.,-1110.,0.])
+   
+###### Functions ######
+
+def scene_transition1():
+
+   # Make most recent emblem move downward
+   a[0].z_step = -a[0].z_step
+   
+   # make image on floor to represent the relevant dream
+   points = [[-5.,-5., 0.01],[5., -5., 0.01],[-5., 5., 0.01],[5.,5.,0.01]]
+   a.append(Floor(points,get_dream(-1)))
+   a[-1].color = [1.,1.,1.,0.]
+   
+

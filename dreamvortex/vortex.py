@@ -153,7 +153,7 @@ class Vortex:
       vortex = Vortex.random_vortex()
 
       # randomize start point
-      for _ in range(randint(100, 450)):
+      for _ in range(randint(100, 300)):
          vortex.step()
          # move the image back down to the floor
          vortex.pos[2] = vortex.pos[2] - vortex.z_step
